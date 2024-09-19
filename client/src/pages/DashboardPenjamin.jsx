@@ -84,7 +84,7 @@ const DashboardPenjamin = () => {
         {/* Pagination controls */}
         <div className="flex justify-center mt-8">
           <button
-            className={`px-4 py-2 mx-2 ${currentPage === 1 ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-700'} text-white rounded`}
+            className={`px-4 py-2 mx-2 ${currentPage === 1 ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-700'} text-white rounded`}
             onClick={handlePrevPage}
             disabled={currentPage === 1}
           >
