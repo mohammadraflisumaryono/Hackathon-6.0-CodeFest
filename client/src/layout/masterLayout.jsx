@@ -21,7 +21,7 @@ const MasterLayout = ({ children }) => {
     <div className="flex flex-col min-h-screen h-full w-full bg-[#111827] text-gray-200">
       <header className="bg-none p-4 w-full">
         <div className="flex justify-between items-center px-6">
-          <div className="text-teal-200 font-bold text-xl">SaktiLoan.</div>
+          <Link to="/" className="text-teal-200 font-bold text-xl">SaktiLoan.</Link>
           <nav className="flex-1 flex justify-center space-x-20">
             {navLinks.map((link) => (
               <Link
