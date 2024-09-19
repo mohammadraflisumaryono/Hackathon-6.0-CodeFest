@@ -1,20 +1,42 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { getUserManagementContractInstance, UserManagementInterface } from '../contracts/UserManagement';
+
+// Asumsikan bahwa fungsi ini diimpor dari file terpisah
+// yang berisi logika untuk berinteraksi dengan kontrak
+import { getUserManagementContractInstance } from '../contracts/UserManagement';
 
 const Login = () => {
   const [account, setAccount] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [contract, setContract] = useState(null);
+  const [error, setError] = useState('');
+  const [isContractInitialized, setIsContractInitialized] = useState(false);
 
   useEffect(() => {
     const initContract = async () => {
-      if (window.ethereum) {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contractInstance = getUserManagementContractInstance(signer);
-        setContract(contractInstance);
+      if (typeof window.ethereum !== 'undefined') {
+        try {
+          // Pastikan ethers tersedia
+          if (typeof ethers === 'undefined') {
+            throw new Error('Ethers library tidak tersedia');
+          }
+
+          // Gunakan BrowserProvider untuk ethers v6
+          const provider = new ethers.BrowserProvider(window.ethereum);
+          const signer = await provider.getSigner();
+          const contractInstance = await getUserManagementContractInstance(signer);
+          setContract(contractInstance);
+          setIsContractInitialized(true);
+          console.log("Contract initialized:", contractInstance);
+        } catch (error) {
+          console.error("Failed to initialize contract:", error);
+          setError(`Gagal menginisialisasi kontrak: ${error.message}`);
+          setIsContractInitialized(false);
+        }
+      } else {
+        setError("Ethereum provider tidak ditemukan. Silakan instal MetaMask!");
+        setIsContractInitialized(false);
       }
     };
 
@@ -22,96 +44,134 @@ const Login = () => {
   }, []);
 
   const connectWallet = async () => {
-    if (window.ethereum) {
+    if (typeof window.ethereum !== 'undefined') {
       try {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        setAccount(accounts[0]);
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const accounts = await provider.send("eth_requestAccounts", []);
+        if (accounts.length > 0) {
+          setAccount(accounts[0]);
+          console.log("Connected account:", accounts[0]);
+        }
       } catch (error) {
         console.error("Failed to connect wallet:", error);
+        setError("Gagal menghubungkan dompet. Silakan coba lagi.");
       }
     } else {
-      alert("Please install MetaMask!");
+      setError("Silakan instal MetaMask!");
     }
   };
 
   const registerUser = async () => {
-    if (!contract || !account) {
-      alert("Please connect your wallet and ensure the contract is initialized.");
+    if (!isContractInitialized) {
+      setError("Kontrak belum diinisialisasi. Silakan coba lagi nanti.");
       return;
     }
+    if (!contract) {
+      setError("Kontrak tidak tersedia. Silakan coba lagi nanti.");
+      return;
+    }
+    if (!account) {
+      setError("Silakan hubungkan dompet Anda terlebih dahulu.");
+      return;
+    }
+    if (!name || !password) {
+      setError("Silakan isi semua kolom.");
+      return;
+    }
+
     try {
-      const result = await UserManagementInterface.register(contract, account, name, password);
+      const result = await contract.register(account, name, password);
       console.log("Registration result:", result);
-      alert("Registration successful!");
+
+      // Tunggu transaksi selesai
+      await result.wait();
+
+      alert("Pendaftaran berhasil!");
+      setName('');
+      setPassword('');
     } catch (error) {
       console.error("Registration failed:", error);
-      alert("Registration failed. See console for details.");
+      if (error.message.includes("User already exists")) {
+        setError("Alamat ini sudah terdaftar. Silakan masuk.");
+      } else {
+        setError("Pendaftaran gagal. Lihat konsol untuk detailnya.");
+      }
     }
   };
 
   const loginUser = async () => {
-    if (!contract || !account) {
-      alert("Please connect your wallet and ensure the contract is initialized.");
+    if (!isContractInitialized || !contract) {
+      setError("Kontrak belum diinisialisasi. Silakan coba lagi nanti.");
+      return;
+    }
+    if (!account) {
+      setError("Silakan hubungkan dompet Anda terlebih dahulu.");
       return;
     }
     try {
-      const result = await UserManagementInterface.login(contract, account, password);
+      const result = await contract.login(account, password);
       console.log("Login result:", result);
-      if (result) {
-        alert("Login successful!");
-      } else {
-        alert("Login failed. Incorrect password.");
-      }
+      
+      // Tunggu transaksi selesai
+      await result.wait();
+
+      alert("Login berhasil!");
     } catch (error) {
       console.error("Login failed:", error);
-      alert("Login failed. See console for details.");
+      setError("Login gagal. Lihat konsol untuk detailnya.");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg mt-10">
-      <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">Login/Register</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-gray-700 mb-6 text-center">Login/Register</h2>
 
-      <button
-        onClick={connectWallet}
-        className={`w-full py-2 px-4 text-white font-semibold rounded-lg mb-4 ${
-          account ? 'bg-green-500' : 'bg-blue-500'
-        }`}
-      >
-        {account ? "Wallet Connected" : "Connect Wallet"}
-      </button>
+        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
-      {account && <p className="text-green-500 mb-4 text-center">Connected account: {account}</p>}
-
-      <input
-        type="text"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full p-2 mb-6 border border-gray-300 rounded-lg"
-      />
-
-      <div className="flex justify-between">
         <button
-          onClick={registerUser}
-          className="w-1/2 bg-blue-500 text-white py-2 px-4 rounded-lg mr-2 font-semibold"
+          onClick={connectWallet}
+          className={`w-full py-2 px-4 text-white font-semibold rounded-lg mb-4 ${
+            account ? 'bg-green-500' : 'bg-blue-500'
+          }`}
         >
-          Register
+          {account ? "Dompet Terhubung" : "Hubungkan Dompet"}
         </button>
-        <button
-          onClick={loginUser}
-          className="w-1/2 bg-green-500 text-white py-2 px-4 rounded-lg ml-2 font-semibold"
-        >
-          Login
-        </button>
+
+        {account && <p className="text-green-500 mb-4 text-center">Akun terhubung: {account}</p>}
+
+        <input
+          type="text"
+          placeholder="Nama"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
+        />
+
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-2 mb-6 border border-gray-300 rounded-lg"
+        />
+
+        <div className="flex justify-between">
+          <button
+            onClick={registerUser}
+            className="w-1/2 bg-blue-500 text-white py-2 px-4 rounded-lg mr-2 font-semibold"
+            disabled={!isContractInitialized}
+          >
+            Daftar
+          </button>
+          <button
+            onClick={loginUser}
+            className="w-1/2 bg-green-500 text-white py-2 px-4 rounded-lg ml-2 font-semibold"
+            disabled={!isContractInitialized}
+          >
+            Masuk
+          </button>
+        </div>
       </div>
     </div>
   );

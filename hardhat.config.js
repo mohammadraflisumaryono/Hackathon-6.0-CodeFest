@@ -7,10 +7,7 @@ module.exports = {
     ganache: {
       url: "http://127.0.0.1:7545",  // URL Ganache
       accounts: [
-        // Masukkan private key akun Ganache di sini (tanpa 0x di depan)
-        "PRIVATE_KEY_1",
-        "PRIVATE_KEY_2",
-        // Tambahkan akun lain jika perlu
+       '0x1200cef6d0c9a580f04c7a8ffa71cf1f3f35f40fc9561ebcccf7118f8c309994'
       ],
     },
   },

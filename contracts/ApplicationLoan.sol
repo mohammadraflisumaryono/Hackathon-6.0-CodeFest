@@ -41,8 +41,8 @@ contract ApplicationLoan {
             _target,
             _deadline,
             1,
-            new address ,
-            new uint256 ,
+            new address[](0), // Initialize guarantors as empty array
+            new uint256[](0), // Initialize guaranteed amounts as empty array
             0 // Initialize total paid as 0
         );
         return loanCounter;
@@ -50,7 +50,10 @@ contract ApplicationLoan {
 
     function makePayment(uint256 _loanId, uint256 _amount) public {
         require(loans[_loanId].isLoanActive == 2, "Loan is not active.");
-        require(msg.sender == loans[_loanId].owner, "Only the borrower can make payments.");
+        require(
+            msg.sender == loans[_loanId].owner,
+            "Only the borrower can make payments."
+        );
 
         // Record the payment
         loans[_loanId].totalPaid += _amount;
@@ -69,33 +72,33 @@ contract ApplicationLoan {
         }
     }
 
-    function getLoan(uint256 _loanId)
-        public
-        view
-        returns (
-            address,
-            string memory,
-            string memory,
-            uint256,
-            uint256,
-            uint256,
-            uint256,
-            address[] memory,
-            uint256[] memory,
-            uint256
-        )
-    {
-        return (
-            loans[_loanId].owner,
-            loans[_loanId].title,
-            loans[_loanId].description,
-            loans[_loanId].amount,
-            loans[_loanId].target,
-            loans[_loanId].deadline,
-            loans[_loanId].isLoanActive,
-            loans[_loanId].guarantors,
-            loans[_loanId].guaranteedAmounts,
-            loans[_loanId].totalPaid
-        );
+    struct LoanDetails {
+        address owner;
+        string title;
+        string description;
+        uint256 amount;
+        uint256 target;
+        uint256 deadline;
+        uint256 isLoanActive;
+        address[] guarantors;
+        uint256[] guaranteedAmounts;
+        uint256 totalPaid;
+    }
+
+    function getLoan(uint256 _loanId) public view returns (LoanDetails memory) {
+        Loan storage loan = loans[_loanId];
+        return
+            LoanDetails(
+                loan.owner,
+                loan.title,
+                loan.description,
+                loan.amount,
+                loan.target,
+                loan.deadline,
+                loan.isLoanActive,
+                loan.guarantors,
+                loan.guaranteedAmounts,
+                loan.totalPaid
+            );
     }
 }
