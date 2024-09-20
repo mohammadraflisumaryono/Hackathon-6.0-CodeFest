@@ -5,6 +5,7 @@ import MasterLayout from './layout/masterLayout';
 import FormPeminjaman from './components/formPeminjaman';
 import DashboardPenjamin from './pages/DashboardPenjamin';
 import Login from './components/login'; 
+import DashboardPeminjam from './pages/DashboardPeminjam';
 // import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
 
 function App() {
@@ -27,7 +28,7 @@ function App() {
           />
           <Route 
             path="/peminjam" 
-            element={<h1>Dashboard Peminjam</h1>}
+            element={<DashboardPeminjam/>}
           />
           <Route 
             path="/riwayat-transaksi" 

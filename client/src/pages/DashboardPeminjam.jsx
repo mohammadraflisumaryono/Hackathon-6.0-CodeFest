@@ -3,7 +3,7 @@ import { useState } from 'react'; // Import useState untuk pagination
 import Card from '../components/cardDetail';
 import GuaranteeCard from '../components/GuaranteeCard'; // Import komponen GuaranteeCard
 
-const DashboardPenjamin = () => {
+const DashboardPeminjam = () => {
   const guaranteeData = [
     { name: "Ali Subekti", occupation: "Pengusaha UMKM", loan: "5000", nisbah: "10", duration: "9", creditScore: "750", risk: "Rendah" },
     { name: "Budi Santoso", occupation: "Petani", loan: "4000", nisbah: "12", duration: "6", creditScore: "720", risk: "Sedang" },
@@ -48,7 +48,7 @@ const DashboardPenjamin = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4 ml-10">Dashboard Peminjam</h1>
+      <h1 className="text-3xl font-bold mb-4 ml-10">Dashboard Pemberi Pinjanman</h1>
       <p className="text-gray-300 mb-6 ml-10">
         Selamat datang di platform penjaminan berbasis blockchain! Di sini, Anda bisa memilih peminjam yang membutuhkan dana dan menjamin pinjaman <br />
         mereka dengan aman melalui smart contract blockchain yang transparan dan otomatis.
@@ -57,17 +57,17 @@ const DashboardPenjamin = () => {
       </p>
 
       {/* Grid untuk 3 Card */}
-        <div className="flex justify-center">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  md:gap-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-7xl w-full mx-auto">
+      <div className="flex justify-center">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  md:gap-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-7xl w-full  mx-auto">
         <Card title="Total Dana Terjamin" value="50,000 USD" icon={<FaDollarSign />} />  {/* Icon Dollar */}
         <Card title="Persentase Terjamin" value="8.5 %" icon={<FaPercentage />} />       {/* Icon Persentase */}
         <Card title="Jumlah Penjamin" value="12" icon={<FaUsers />} />                   {/* Icon Users */}
-        </div>
-      </div>
+              </div>
+            </div>
 
       {/* Tambahkan GuaranteeCard di sini */}
       <div className="mt-8 flex flex-col gap-6">
-        <h3 className="text-xl font-bold mb-6 ml-10">Tambah Dana Jaminan</h3>
+        <h3 className="text-xl font-bold mb-6 ml-10">Beri Pinjaman</h3>
 
         {/* Tampilkan GuaranteeCard berdasarkan pagination */}
         {currentData.map((guarantee, index) => (
@@ -119,4 +119,4 @@ const DashboardPenjamin = () => {
   );
 };
 
-export default DashboardPenjamin;
+export default DashboardPeminjam;

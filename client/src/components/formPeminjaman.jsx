@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const FormPeminjaman = () => {
@@ -50,7 +50,7 @@ const FormPeminjaman = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4">
-      <div className="w-full max-w-xl bg-gray-800 rounded-2xl shadow-2xl p-12 space-y-8"> {/* Perbesar card */}
+      <div className="w-full max-w-xl bg-gray-800 rounded-2xl shadow-2xl mb-28 p-12 space-y-8"> {/* Perbesar card */}
         <h2 className="text-3xl font-bold text-center text-white mb-6">Form Peminjaman</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {step === 1 && (
