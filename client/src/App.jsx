@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import MasterLayout from './layout/masterLayout';
+import FormPeminjaman from './components/formPeminjaman';
 import DashboardPenjamin from './pages/DashboardPenjamin';
 import Login from './components/login'; 
-import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
+// import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to handle login status
@@ -22,27 +23,19 @@ function App() {
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
           <Route 
             path="/penjamin" 
-            element={
-              <PrivateRoute isLoggedIn={isLoggedIn}>
-                <DashboardPenjamin />
-              </PrivateRoute>
-            }
+            element={<DashboardPenjamin />}
           />
           <Route 
             path="/peminjam" 
-            element={
-              <PrivateRoute isLoggedIn={isLoggedIn}>
-                <h1>Dashboard Peminjam</h1>
-              </PrivateRoute>
-            }
+            element={<h1>Dashboard Peminjam</h1>}
           />
           <Route 
             path="/riwayat-transaksi" 
-            element={
-              <PrivateRoute isLoggedIn={isLoggedIn}>
-                <h1>Riwayat Transaksi</h1>
-              </PrivateRoute>
-            }
+            element={<h1>Riwayat Transaksi</h1>}
+          />
+          <Route
+            path="/form-peminjaman"
+            element={<FormPeminjaman />}
           />
         </Routes>
       </MasterLayout>
