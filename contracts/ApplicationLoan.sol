@@ -71,6 +71,37 @@ contract ApplicationLoan {
             loans[_loanId].isLoanActive = 3; // Mark loan as fully paid
         }
     }
+    
+
+     // Function to check if the user has any unpaid loans
+    function hasUnpaidLoans(address _user) public view returns (bool) {
+        for (uint256 i = 1; i <= loanCounter; i++) {
+            if (loans[i].owner == _user && loans[i].isLoanActive != 3) {
+                return true; // User has unpaid loans
+            }
+        }
+        return false; // No unpaid loans
+    }
+
+    // Prevent user from becoming a guarantor if they have unpaid loans
+    function becomeGuarantor(uint256 _loanId, uint256 _amount) public {
+        require(!hasUnpaidLoans(msg.sender), "User has unpaid loans and cannot be a guarantor.");
+        // Logic for adding the user as a guarantor
+        transactionContract.recordGuarantee(msg.sender, _loanId, _amount);
+        loans[_loanId].guarantors.push(msg.sender);
+        loans[_loanId].guaranteedAmounts.push(_amount);
+    }
+
+    function isGuaranteeAprop(uint256 _loanId) public view returns (bool){
+        uint256 totalGuarantee = 0;
+        Loan storage loan = loans[_loanId];
+
+        for (uint256 i = 0; i < loan.guaranteedAmounts.length; i++){
+            totalGuarantee += loan.guaranteedAmounts[i];
+        }
+
+        return totalGuarantee == loan.amount;
+    }
 
     struct LoanDetails {
         address owner;
@@ -84,6 +115,7 @@ contract ApplicationLoan {
         uint256[] guaranteedAmounts;
         uint256 totalPaid;
     }
+    
 
     function getLoan(uint256 _loanId) public view returns (LoanDetails memory) {
         Loan storage loan = loans[_loanId];
