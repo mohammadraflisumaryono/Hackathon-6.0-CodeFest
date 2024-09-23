@@ -1,10 +1,15 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ApplicationLoanContext } from '../context/ApplicationLoanContext';
 
 const FormPeminjaman = () => {
   const [step, setStep] = useState(1);
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
+
+  const { connectWallet, currentAccount, setFormData, formData, handleChange } = useContext(ApplicationLoanContext);
+
+
 
   const handleNext = () => {
     if (step < 3) {
@@ -66,6 +71,7 @@ const FormPeminjaman = () => {
                   required
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Nama Usaha"
+                  handleChange={handleChange}
                 />
               </div>
               <div>
@@ -79,6 +85,7 @@ const FormPeminjaman = () => {
                   required
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Deskripsi..."
+                  handleChange={handleChange}
                 ></textarea>
               </div>
             </>
@@ -96,6 +103,7 @@ const FormPeminjaman = () => {
                   required
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="XX (eth)"
+                  handleChange={handleChange}
                 />
               </div>
               <div>
@@ -109,6 +117,7 @@ const FormPeminjaman = () => {
                   required
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="XXX (eth)"
+                  handleChange={handleChange}
                 />
               </div>
               <div>
@@ -122,6 +131,7 @@ const FormPeminjaman = () => {
                   required
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="DD/MM/YYYY"
+                  handleChange={handleChange}
                 />
               </div>
             </>
