@@ -23,9 +23,9 @@ const ProfileDashboard = () => {
           <h1 className="text-2xl font-bold">Profile Dashboard</h1>
           <div className="flex space-x-4">
             <FaBell className="w-6 h-6" />
-              <Link to="/" className="hover:text-green-400 transition-transform duration-300 ease-in-out transform hover:scale-125">
-                          <FaHome className="w-6 h-6" />
-                </Link>
+            <Link to="/" className="hover:text-green-400 transition-transform duration-300 ease-in-out transform hover:scale-125">
+              <FaHome className="w-6 h-6" />
+            </Link>
           </div>
         </header>
 
@@ -69,8 +69,8 @@ const ProfileDashboard = () => {
 
         <div className="bg-gray-800 rounded-lg p-4">
           <h3 className="text-xl font-semibold mb-4">Aktivitas Terakhir</h3>
-          <ActivityTable activities={activities} />
-            <Link to="/riwayat-transaksi" className="mt-4 text-green-500 hover:underline">
+          <ActivityTable activities={activities} showPagination={false} /> {/* Hiding pagination */}
+          <Link to="/riwayat-transaksi" className="mt-4 text-green-500 hover:underline">
             Lihat Semua Aktivitas
           </Link>
         </div>

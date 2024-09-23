@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaGlobe, FaUniversity, FaLock, FaHandshake, FaClipboardList, FaSearch, FaCheckCircle } from 'react-icons/fa';
+import { FaGlobe, FaUniversity, FaLock, } from 'react-icons/fa';
 
 // Reusable Components
 
@@ -25,7 +25,7 @@ const IconBox = ({ imageSrc, title, icon, color }) => (
 );
 
 const LayananCard = ({ imageSrc, title, description }) => (
-    <div className="bg-gray-800 p-6 rounded-3xl text-center w-auto h-96 mb-12 border">
+    <div className="bg-gray-800 p-6 rounded-3xl text-center w-auto h-96 mb-12 border" id=''>
         <div className="flex justify-center mb-4">
             <img src={imageSrc} alt={title} className="w-40 h-40" />
         </div>
