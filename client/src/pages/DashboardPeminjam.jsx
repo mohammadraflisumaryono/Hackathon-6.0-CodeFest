@@ -1,9 +1,16 @@
+import React, { useContext } from 'react';
 import { FaDollarSign, FaPercentage, FaUsers } from 'react-icons/fa';  // Import ikon yang dibutuhkan
 import { useState } from 'react'; // Import useState untuk pagination
 import Card from '../components/cardDetail';
 import GuaranteeCard from '../components/GuaranteeCard'; // Import komponen GuaranteeCard
 
+import { ApplicationLoanContext } from '../context/ApplicationLoanContext'; 
+
 const DashboardPeminjam = () => {
+  
+  const { value } = useContext(ApplicationLoanContext);
+  console.log(value);
+
   const guaranteeData = [
     { name: "Ali Subekti", occupation: "Pengusaha UMKM", loan: "5000", nisbah: "10", duration: "9", creditScore: "750", risk: "Rendah" },
     { name: "Budi Santoso", occupation: "Petani", loan: "4000", nisbah: "12", duration: "6", creditScore: "720", risk: "Sedang" },
