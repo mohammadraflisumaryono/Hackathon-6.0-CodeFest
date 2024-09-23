@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaGlobe, FaUniversity, FaLock, FaHandshake, FaClipboardList, FaSearch, FaCheckCircle } from 'react-icons/fa';
+import { FaGlobe, FaUniversity, FaLock } from 'react-icons/fa';
 
 // Reusable Components
 
@@ -12,7 +12,7 @@ const Button = ({ text, ariaLabel, className = "" }) => (
     </button>
 );
 
-const ImageBox = ({ imageSrc, altText, color }) => (
+const ImageBox = ({ imageSrc, altText, color }) => ( 
     <div className={`${color} p-6 flex items-center justify-center`}>
         <img src={imageSrc} alt={altText} className="w-40 h-40 object-contain" />
     </div>
@@ -35,18 +35,20 @@ const LayananCard = ({ imageSrc, title, description }) => (
 );
 
 const ProcessStep = ({ number, title, description, imageSrc, isLeft }) => (
-    <div className={`flex items-center mb-12 ${isLeft ? '' : 'flex-row-reverse'}`}>
-        <div className={`w-1/2 flex ${isLeft ? 'justify-end pr-8' : 'justify-start pl-8'}`}>
-            <div className="text-center">
-                <div className="bg-gray-700 rounded-lg p-2 mb-2">
-                    <img src={imageSrc} alt={title} className="w-28 h-28 object-contain" />
-                </div>
-                <div className="text-4xl font-bold text-gray-600">{number}</div>
+    <div className={`flex items-center  mb-16 relative ${isLeft ? 'flex-row-reverse' : ''}`}>
+        <div className={`w-1/4 ${isLeft ? 'pr-4' : 'pl-4'}`}>
+            <div className="bg-gray-700 rounded-lg p-4 inline-block">
+                <img src={imageSrc} alt={title} className="w-52 h-52 object-contain" />
             </div>
         </div>
-        <div className="w-1/2">
-            <h3 className="text-2xl font-semibold mb-2">{title}</h3>
-            <p className="text-xl text-gray-400">{description}</p>
+        <div className={`w-1/2 text-start ${isLeft ? 'text-right pr-4' : 'text-left pl-4'} relative z-10`}>
+            <h3 className={`text-2xl text-start font-semibold mb-2 ${isLeft ? 'text-right' : 'text-left'}`}>
+                {title}
+            </h3>
+            <p className="text-gray-400 text-lg w-auto relative z-10">{description}</p>
+        </div>
+        <div className={`absolute ${isLeft ? 'left-0' : 'right-0'} top-6 transform -translate-y-1/2 text-gray-800 text-[60px] font-bold opacity-2 z-0`}>
+            {number}
         </div>
     </div>
 );
@@ -77,10 +79,10 @@ const ImageGrid = () => (
 );
 
 const LayananKamiSection = () => (
-    <div id="layanan-kami" className="bg-gray-800 text-white p-8 w-full flex justify-center items-center mb-16">
+    <div id="layanan-kami" className="bg-gray-800 text-white p-8 w-full flex justify-center items-center mb-16 rounded-3xl">
         <div className="bg-gray-800 text-white p-8 w-full mb-2">
             <h2 className="text-4xl font-bold text-center mb-8">Layanan Kami</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-40">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-40">
                 <LayananCard
                     imageSrc="../img/duit.png"
                     title="Pinjaman Sesuai Syariah"
@@ -109,46 +111,45 @@ const LayananKamiSection = () => (
 
 
 const ProsesPeminjamanSection = () => (
-    <div id="proses-peminjaman" className="bg-gray-900 text-white p-8 w-full mb-20">
-        <div className="max-w-5xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-6">Proses Peminjaman</h2>
-            <p className="text-gray-400 text-center mb-10">Bagaimana caranya melakukan peminjaman di sini?</p>
-            <div className="space-y-8">
-                <ProcessStep
-                    number="01"
-                    title="Pengisian Data Peminjaman"
-                    description="Peminjam mengisi formulir yang dibutuhkan dan sangat mudah prosesnya."
-                    imageSrc="../img/contract.png"
-                    isLeft={true}
-                />
-                <ProcessStep
-                    number="02"
-                    title="Mencari Penjamin"
-                    description="Setelah data diisi, penjamin harus menyetujui peminjaman yang akan menjamin kelancaran transaksi."
-                    imageSrc="../img/send-money 1.png"
-                    isLeft={false}
-                />
-                <ProcessStep
-                    number="03"
-                    title="Dana Jaminan Terpenuhi"
-                    description="Ketika penjamin sudah memenuhi dana jaminan, maka proses akan dilanjutkan ke pemberi pinjaman."
-                    imageSrc="../img/pinjam.png"
-                    isLeft={true}
-                />
-                <ProcessStep
-                    number="04"
-                    title="Pemberi Pinjaman Bertransaksi"
-                    description="Pemberi pinjaman bersedia, kemudian proses dilanjutkan dan peminjam menerima dana sesuai kesepakatan."
-                    imageSrc="../img/peer-to-peer.png"
-                    isLeft={false}
-                />
-            </div>
+    <div className="bg-gray-900 text-white p-8">
+        <h2 id="proses-peminjaman"className="text-4xl font-bold text-center mb-2">Proses Peminjaman</h2>
+        <p className="text-gray-400 text-center mb-16 text-xl">Bagaimana caranya melakukan peminjaman disini?</p>
+        <div className="max-w-4xl mx-auto">
+            <ProcessStep
+                number="01"
+                title="Pengisian Data Peminjaman"
+                description="Peminjam mengisi formulir yang dibutuhkan dan sangat mudah prosesnya."
+                imageSrc="../img/contract.png"
+                isLeft={false}
+            />
+            <ProcessStep
+                number="02"
+                title="Mencari Penjamin"
+                description="Setelah data diisi, penjamin harus menyetujui peminjaman yang akan menjamin kelancaran transaksi."
+                imageSrc="../img/send-money 1.png"
+                isLeft={true}
+            />
+            <ProcessStep
+                number="03"
+                title="Dana Jaminan Terpenuhi"
+                description="Ketika penjamin sudah memenuhi dana jaminan, maka proses akan dilanjutkan ke pemberi pinjaman."
+                imageSrc="../img/pinjam.png"
+                isLeft={false}
+            />
+            <ProcessStep
+                number="04"
+                title="Memberi Pinjaman Bertransaksi"
+                description="Pemberi pinjaman bersedia, kemudian proses dilanjutkan dan peminjam menerima dana sesuai kesepakatan."
+                imageSrc="../img/peer-to-peer.png"
+                isLeft={true}
+            />
         </div>
     </div>
 );
 
+
 const TentangKamiSection = () => (
-    <div id="tentang-kami" className="bg-gray-900 text-white p-8 w-full mb-16">
+    <div id="tentang-kami" className="bg-gray-800 text-white p-8 w-full mb-8 rounded-3xl">
         <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-semibold mb-6">Tentang Kami</h2>
             <div className="flex">
@@ -176,11 +177,11 @@ const TentangKamiSection = () => (
                                 Kepatuhan Syariah : Semua transaksi adil dan bebas bunga.
                             </li>
                             <li className="flex items-center mb-1">
-                            <FaLock className="mr-2" />
+                                <FaLock className="mr-2" />
                                 Transparansi Blockchain : Setiap transaksi tercatat, membangun kepercayaan.
                             </li>
                             <li className="flex items-center">
-                            <FaGlobe className="mr-2" />
+                                <FaGlobe className="mr-2" />
                                 Jangkauan Global : Terhubung dengan pengguna di seluruh dunia.
                             </li>
                         </ul>

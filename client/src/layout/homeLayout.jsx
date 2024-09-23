@@ -13,8 +13,8 @@ const MasterLayout = ({ children }) => {
   
     const navLinks = [
       { to: "/beranda", label: "Beranda" },
-      { to: "/layanan", label: "Layanan" },
-      { to: "/proses-pinjaman", label: "Proses Pinjaman" },
+      { to: "/layanan-kami", label: "Layanan" },
+      { to: "/proses-peminjaman", label: "Proses Pinjaman" },
       { to: "/tentang-kami", label: "Tentang Kami" }
     ];
   
@@ -25,7 +25,7 @@ const MasterLayout = ({ children }) => {
             <Link to="/" className="text-teal-200 font-bold text-xl">SaktiLoan.</Link>
             <nav className="flex-1 flex justify-center space-x-20">
               {navLinks.map((link) => (
-                <Link
+                <a
                   key={link.to}
                   to={link.to}
                   className={`relative text-white no-underline hover:text-gray-300 pb-2 ${
@@ -33,7 +33,7 @@ const MasterLayout = ({ children }) => {
                   }`}
                 >
                   {link.label}
-                </Link>
+                </a>
               ))}
             </nav>
             <div className="flex items-center space-x-6">

@@ -21,10 +21,11 @@ export default {
           bottom: '0',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: '50px', // Panjang garis tetap
-          height: '2px',  // Ketebalan garis
-          backgroundColor: 'white', // Warna garis
+          width: '50px', 
+          height: '2px',  
+          backgroundColor: 'white', 
         },
+    
       };
       addUtilities(newUtilities, ['responsive', 'hover']);
     },
