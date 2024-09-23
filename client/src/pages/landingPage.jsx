@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 
 // Reusable Components
@@ -83,20 +84,28 @@ ProcessStep.propTypes = {
 };
 
 // Sections
+const HeroSection = () => {
+    const navigate = useNavigate();
 
-const HeroSection = () => (
-    <div id="Beranda" className="flex flex-col md:flex-row justify-between items-start mx-auto mb-52">
-        <div className="space-y-7 mb-6 md:mb-0 ml-20 mt-24">
-            <h1 className="text-7xl font-bold mt-10 font-inter">Pinjaman Aman dengan SaktiLoan</h1>
-            <p className="text-lg text-gray-400 max-w-lg">
-                Sakti Loan menggunakan teknologi blockchain untuk menyediakan pinjaman dan peminjaman yang aman dan transparan.
-                Baik Anda meminjam atau memberikan pinjaman, setiap transaksi dilindungi dan cepat, tanpa perantara yang terlibat.
-            </p>
-            <Button text="Mulai Sekarang" ariaLabel="Mulai Sekarang" />
+    const buttonMulaiSekarang = () => { 
+        console.log('Button clicked');
+        navigate('/penjamin');
+    };
+
+    return (
+        <div id="Beranda" className="flex flex-col md:flex-row justify-between items-start mx-auto mb-52">
+            <div className="space-y-7 mb-6 md:mb-0 ml-20 mt-24">
+                <h1 className="text-7xl font-bold mt-10 font-inter">Pinjaman Aman dengan SaktiLoan</h1>
+                <p className="text-lg text-gray-400 max-w-lg">
+                    Sakti Loan menggunakan teknologi blockchain untuk menyediakan pinjaman dan peminjaman yang aman dan transparan.
+                    Baik Anda meminjam atau memberikan pinjaman, setiap transaksi dilindungi dan cepat, tanpa perantara yang terlibat.
+                </p>
+                <Button text="Mulai Sekarang" ariaLabel="Mulai Sekarang" className="cursor-pointer" onClick={buttonMulaiSekarang} />
+            </div>
+            <ImageGrid />
         </div>
-        <ImageGrid />
-    </div>
-);
+    );
+};
 
 const ImageGrid = () => (
     <div className="grid grid-cols-2 gap-4 mt-32 mr-20 ">
