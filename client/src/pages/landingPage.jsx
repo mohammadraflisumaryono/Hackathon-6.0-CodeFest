@@ -1,5 +1,5 @@
-import React from 'react';
-import { FaGlobe, FaUniversity, FaLock, } from 'react-icons/fa';
+import PropTypes from 'prop-types';
+
 
 // Reusable Components
 
@@ -12,17 +12,34 @@ const Button = ({ text, ariaLabel, className = "" }) => (
     </button>
 );
 
+Button.propTypes = {
+    text: PropTypes.string.isRequired,
+    ariaLabel: PropTypes.string.isRequired,
+    className: PropTypes.string
+};
+
 const ImageBox = ({ imageSrc, altText, color }) => (
     <div className={`${color} p-6 flex items-center justify-center`}>
         <img src={imageSrc} alt={altText} className="w-40 h-40 object-contain" />
     </div>
 );
 
-const IconBox = ({ imageSrc, title, icon, color }) => (
+ImageBox.propTypes = {
+    imageSrc: PropTypes.string.isRequired,
+    altText: PropTypes.string.isRequired,
+    color: PropTypes.string
+};
+
+const IconBox = ({ icon, color }) => (
     <div className={`${color} p-6 flex items-center justify-center`}>
         {icon}
     </div>
 );
+
+IconBox.propTypes = {
+    icon: PropTypes.node.isRequired,
+    color: PropTypes.string
+};
 
 const LayananCard = ({ imageSrc, title, description }) => (
     <div className="bg-gray-800 p-6 rounded-3xl text-center w-auto h-96 mb-12 border" id=''>
@@ -33,6 +50,12 @@ const LayananCard = ({ imageSrc, title, description }) => (
         <p className="text-lg text-gray-400">{description}</p>
     </div>
 );
+
+LayananCard.propTypes = {
+    imageSrc: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired
+};
 
 const ProcessStep = ({ number, title, description, imageSrc, isLeft }) => (
     <div className={`flex items-center mb-12 ${isLeft ? '' : 'flex-row-reverse'}`}>
@@ -50,6 +73,14 @@ const ProcessStep = ({ number, title, description, imageSrc, isLeft }) => (
         </div>
     </div>
 );
+
+ProcessStep.propTypes = {
+    number: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    imageSrc: PropTypes.string.isRequired,
+    isLeft: PropTypes.bool.isRequired
+};
 
 // Sections
 
@@ -106,8 +137,6 @@ const LayananKamiSection = () => (
     </div>
 );
 
-
-
 const ProsesPeminjamanSection = () => (
     <div id="proses-peminjaman" className="bg-gray-900 text-white p-8 w-full mb-16">
         <div className="max-w-4xl mx-auto">
@@ -162,28 +191,11 @@ const TentangKamiSection = () => (
                             Kami berkomitmen menyederhanakan proses pinjaman sesuai prinsip syariah, menyediakan platform yang aman, tanggung, dan tanpa bunga.
                         </p>
                     </div>
-                    <div className="mt-4">
+                    <div>
                         <h3 className="text-xl font-semibold mb-2">Visi Kami</h3>
                         <p className="text-lg text-gray-400">
-                            Membangun jaringan global berbasis blockchain yang mengutamakan keadilan, transparansi, dan integritas dalam transaksi keuangan.
+                            Mewujudkan masyarakat yang lebih adil dengan memberikan kesempatan pinjaman tanpa riba, memastikan kesejahteraan semua pihak yang terlibat.
                         </p>
-                    </div>
-                    <div className="mt-4">
-                        <h3 className="text-xl font-semibold mb-2">Kenapa Memilih Kami</h3>
-                        <ul className="text-lg text-gray-400">
-                            <li className="flex items-center mb-1">
-                                <FaUniversity className="mr-2" />
-                                Kepatuhan Syariah : Semua transaksi adil dan bebas bunga.
-                            </li>
-                            <li className="flex items-center mb-1">
-                            <FaLock className="mr-2" />
-                                Transparansi Blockchain : Setiap transaksi tercatat, membangun kepercayaan.
-                            </li>
-                            <li className="flex items-center">
-                            <FaGlobe className="mr-2" />
-                                Jangkauan Global : Terhubung dengan pengguna di seluruh dunia.
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
@@ -191,16 +203,13 @@ const TentangKamiSection = () => (
     </div>
 );
 
-
 // Main Component
-
 const LandingPage = () => (
-    <div className="bg-gray-900 text-white">
+    <div>
         <HeroSection />
         <LayananKamiSection />
         <ProsesPeminjamanSection />
         <TentangKamiSection />
-        {/* Additional sections can be added here */}
     </div>
 );
 

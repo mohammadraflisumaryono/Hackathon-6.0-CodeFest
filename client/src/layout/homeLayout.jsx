@@ -1,4 +1,3 @@
-// src/layout/masterLayout.js
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
