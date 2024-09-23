@@ -29,8 +29,8 @@ const LayananCard = ({ imageSrc, title, description }) => (
         <div className="flex justify-center mb-4">
             <img src={imageSrc} alt={title} className="w-40 h-40" />
         </div>
-        <h3 className="text-lg font-semibold mb-2 p-2">{title}</h3>
-        <p className="text-lg text-gray-400">{description}</p>
+        <h3 className="text-2xl font-semibold mb-2 p-2">{title}</h3>
+        <p className="text-xl text-gray-400">{description}</p>
     </div>
 );
 
@@ -39,14 +39,14 @@ const ProcessStep = ({ number, title, description, imageSrc, isLeft }) => (
         <div className={`w-1/2 flex ${isLeft ? 'justify-end pr-8' : 'justify-start pl-8'}`}>
             <div className="text-center">
                 <div className="bg-gray-700 rounded-lg p-2 mb-2">
-                    <img src={imageSrc} alt={title} className="w-16 h-16 object-contain" />
+                    <img src={imageSrc} alt={title} className="w-28 h-28 object-contain" />
                 </div>
                 <div className="text-4xl font-bold text-gray-600">{number}</div>
             </div>
         </div>
         <div className="w-1/2">
-            <h3 className="text-xl font-semibold mb-2">{title}</h3>
-            <p className="text-sm text-gray-400">{description}</p>
+            <h3 className="text-2xl font-semibold mb-2">{title}</h3>
+            <p className="text-xl text-gray-400">{description}</p>
         </div>
     </div>
 );
@@ -79,7 +79,7 @@ const ImageGrid = () => (
 const LayananKamiSection = () => (
     <div id="layanan-kami" className="bg-gray-800 text-white p-8 w-full flex justify-center items-center mb-16">
         <div className="bg-gray-800 text-white p-8 w-full mb-2">
-            <h2 className="text-3xl font-bold text-center mb-8">Layanan Kami</h2>
+            <h2 className="text-4xl font-bold text-center mb-8">Layanan Kami</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-40">
                 <LayananCard
                     imageSrc="../img/duit.png"
@@ -109,9 +109,9 @@ const LayananKamiSection = () => (
 
 
 const ProsesPeminjamanSection = () => (
-    <div id="proses-peminjaman" className="bg-gray-900 text-white p-8 w-full mb-16">
-        <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-semibold text-center mb-6">Proses Peminjaman</h2>
+    <div id="proses-peminjaman" className="bg-gray-900 text-white p-8 w-full mb-20">
+        <div className="max-w-5xl mx-auto">
+            <h2 className="text-4xl font-bold text-center mb-6">Proses Peminjaman</h2>
             <p className="text-gray-400 text-center mb-10">Bagaimana caranya melakukan peminjaman di sini?</p>
             <div className="space-y-8">
                 <ProcessStep
