@@ -7,9 +7,16 @@ const FormPeminjaman = () => {
   const [files, setFiles] = useState([]);
   const navigate = useNavigate();
 
-  const { connectWallet, currentAccount, setFormData, formData, handleChange } = useContext(ApplicationLoanContext);
+  const { connectWallet, currentAccount, sendApplication } = useContext(ApplicationLoanContext);
 
-
+  const [formData, setFormData] = useState({
+    owner: '',
+    title: '',
+    description: '',
+    amount: '',
+    target: '',
+    deadline: ''
+  });
 
   const handleNext = () => {
     if (step < 3) {
@@ -23,6 +30,14 @@ const FormPeminjaman = () => {
     } else {
       navigate(-1);
     }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleFileChange = (e) => {
@@ -44,48 +59,69 @@ const FormPeminjaman = () => {
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
 
-  const handleFinish = () => {
-    console.log('Form submitted with files:', files);
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted');
+    console.log('Form submitted with data:', formData);
+    const { owner, title, description, amount, target, deadline } = formData;
+
+    if (!owner || !title || !description || !amount || !target || !deadline) {
+      alert('Please fill all fields');
+      return;
+    }
+    sendApplication(formData);
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4">
-      <div className="w-full max-w-xl bg-gray-800 rounded-2xl shadow-2xl mb-28 p-12 space-y-8"> {/* Perbesar card */}
+      <div className="w-full max-w-xl bg-gray-800 rounded-2xl shadow-2xl mb-28 p-12 space-y-8">
         <h2 className="text-3xl font-bold text-center text-white mb-6">Form Peminjaman</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {step === 1 && (
             <>
               <div>
-                <label htmlFor="nama-usaha" className="block text-sm font-medium text-gray-300 mb-1">
-                  Nama Usaha
+                <label htmlFor="owner" className="block text-sm font-medium text-gray-300 mb-1">
+                  Nama Pemilik Usaha
                 </label>
                 <input
-                  id="nama-usaha"
-                  name="nama-usaha"
+                  id="owner"
+                  name="owner"
                   type="text"
                   required
+                  value={formData.owner}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Nama Usaha"
-                  handleChange={handleChange}
+                  placeholder="Nama Pemilik Usaha"
+                  onChange={handleChange}
                 />
               </div>
               <div>
-                <label htmlFor="deskripsi" className="block text-sm font-medium text-gray-300 mb-1">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-1">
+                  Judul Pinjaman
+                </label>
+                <input
+                  id="title"
+                  name="title"
+                  type="text"
+                  required
+                  value={formData.title}
+                  className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Judul Pinjaman"
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-1">
                   Deskripsi
                 </label>
                 <textarea
-                  id="deskripsi"
-                  name="deskripsi"
+                  id="description"
+                  name="description"
                   rows="4"
                   required
+                  value={formData.description}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Deskripsi..."
-                  handleChange={handleChange}
+                  onChange={handleChange}
                 ></textarea>
               </div>
             </>
@@ -93,45 +129,48 @@ const FormPeminjaman = () => {
           {step === 2 && (
             <>
               <div>
-                <label htmlFor="jumlah-pinjaman" className="block text-sm font-medium text-gray-300 mb-1">
+                <label htmlFor="amount" className="block text-sm font-medium text-gray-300 mb-1">
                   Jumlah Pinjaman
                 </label>
                 <input
-                  id="jumlah-pinjaman"
-                  name="jumlah-pinjaman"
+                  id="amount"
+                  name="amount"
                   type="text"
                   required
+                  value={formData.amount}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="XX (eth)"
-                  handleChange={handleChange}
+                  placeholder="Jumlah Pinjaman (eth)"
+                  onChange={handleChange}
                 />
               </div>
               <div>
-                <label htmlFor="jumlah-pengembalian" className="block text-sm font-medium text-gray-300 mb-1">
-                  Jumlah Pengembalian
+                <label htmlFor="target" className="block text-sm font-medium text-gray-300 mb-1">
+                  Target Pengembalian
                 </label>
                 <input
-                  id="jumlah-pengembalian"
-                  name="jumlah-pengembalian"
+                  id="target"
+                  name="target"
                   type="text"
                   required
+                  value={formData.target}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="XXX (eth)"
-                  handleChange={handleChange}
+                  placeholder="Target Pengembalian (eth)"
+                  onChange={handleChange}
                 />
               </div>
               <div>
-                <label htmlFor="tanggal-pengembalian" className="block text-sm font-medium text-gray-300 mb-1">
+                <label htmlFor="deadline" className="block text-sm font-medium text-gray-300 mb-1">
                   Tanggal Pengembalian
                 </label>
                 <input
-                  id="tanggal-pengembalian"
-                  name="tanggal-pengembalian"
+                  id="deadline"
+                  name="deadline"
                   type="text"
                   required
+                  value={formData.deadline}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="DD/MM/YYYY"
-                  handleChange={handleChange}
+                  onChange={handleChange}
                 />
               </div>
             </>
@@ -197,8 +236,8 @@ const FormPeminjaman = () => {
               </button>
             ) : (
               <button
-                type="button"
-                onClick={handleFinish}
+                type="submit"
+                onClick={handleSubmit}
                 className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Finish

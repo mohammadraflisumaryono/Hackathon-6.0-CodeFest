@@ -1,38 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { ethers } from 'ethers';
-
+import { ethers, Contract } from 'ethers';
 import { contractABI, contractAddress } from '../utils/ApllicationLoan';
+import FormPeminjaman from '../components/formPeminjaman';
 
 export const ApplicationLoanContext = React.createContext();
 
-const { ethereum } = window;
+// Function to get the contract instance
+const getEthereumContract = async () => {
+    if (!window.ethereum) {
+        throw new Error("Ethereum provider not found");
+    }
 
-const getEtheriumContract = () => {
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, contractABI, signer);
+    console.log("Ethereum provider found");
 
-    console.log({
-        contract,
-        provider,
-        signer
-    });
-}
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+
+    // Ensure that the contract is created using valid address and ABI
+    const contract = new Contract(contractAddress, contractABI, signer);
+
+    console.log(
+        {
+            contractAddress,
+            contractABI,
+            provider,
+            signer,
+            contract
+
+        }
+    )
+
+    return contract;
+};
 
 
 export const ApplicationLoanProvider = ({ children }) => {
-
-    //   address owner;
-    //     string title;
-    //     string description;
-    //     uint256 amount;
-    //     uint256 target;
-    //     uint256 deadline;
-    //     uint256 isLoanActive;
-    // address[] guarantors;
-    // uint256[] guaranteedAmounts;
-    //     uint256 totalPaid;
-    //     uint256 totalGuaranteed;
     const [currentAccount, setCurrentAccount] = useState("");
     const [formData, setFormData] = useState({
         owner: "",
@@ -44,81 +46,69 @@ export const ApplicationLoanProvider = ({ children }) => {
     });
 
     const handleChange = (e, name) => {
-        setFormData((prevState) => (
-            {
-                ...prevState,
-                [name]: e.target.value
-            }
-        ))
-
+        setFormData((prevState) => ({
+            ...prevState,
+            [name]: e.target.value
+        }));
     }
-
 
     const checkIfWalletIsConnected = async () => {
         try {
-            if (!ethereum) return alert("Please Install MetaMask");
+            if (!window.ethereum) return alert("Please Install MetaMask");
 
-            const account = await ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
 
-            if (account.length) {
-                setCurrentAccount(account[0]);
+            if (accounts.length) {
+                setCurrentAccount(accounts[0]);
             } else {
-                console.log("No Account Found");
+                console.log("No authorized account found");
             }
-
         } catch (error) {
             console.log(error);
-
-            throw new Error('Error while connecting to wallet');
+            throw new Error('No ethereum object.');
         }
     }
 
     const connectWallet = async () => {
         try {
-            if (!ethereum) return alert("Please Install MetaMask");
+            if (!window.ethereum) return alert("Please Install MetaMask");
 
-            const account = await ethereum.request({ method: 'eth_requestAccounts' });
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-
-            if (account.length) {
-                setCurrentAccount(account[0]);
-            } else {
-                console.log("No Account Found");
-            }
-
+            setCurrentAccount(accounts[0]);
         } catch (error) {
             console.log(error);
-
-            throw new Error('Error while connecting to wallet');
+            throw new Error('No ethereum object.');
         }
     }
 
-    const sendApllication = async () => {
+    const sendApplication = async () => {
         try {
-            if (!ethereum) return alert("Please Install MetaMask");
 
-            const account = await ethereum.request({ method: 'eth_requestAccounts' });
 
-            if (account.length) {
-                setCurrentAccount(account[0]);
-            } else {
-                console.log("No Account Found");
-            }
+            if (!window.ethereum) return alert("Please Install MetaMask");
+            const { owner, title, description, amount, target, deadline } = formData;
 
+            const contract = getEthereumContract();
+
+            if (!contract) return alert("Contract not found");
+
+            // Here you would typically call a contract method
+            // For example: await contract.createLoan(owner, title, description, amount, target, deadline);
+
+            console.log("Application sent successfully");
         } catch (error) {
             console.log(error);
-
-            throw new Error('Error while connecting to wallet');
+            throw new Error('Error while sending application');
         }
     }
-
 
     useEffect(() => {
         checkIfWalletIsConnected();
     }, []);
 
     return (
-        <ApplicationLoanContext.Provider value={{ connectWallet, currentAccount, setFormData, formData, handleChange }}>
+        <ApplicationLoanContext.Provider value={{ connectWallet, currentAccount, formData, handleChange, sendApplication }}>
             {children}
         </ApplicationLoanContext.Provider>
     )

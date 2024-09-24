@@ -4,12 +4,15 @@ import { useState } from 'react'; // Import useState untuk pagination
 import Card from '../components/cardDetail';
 import GuaranteeCard from '../components/GuaranteeCard'; // Import komponen GuaranteeCard
 
-import { ApplicationLoanContext } from '../context/ApplicationLoanContext'; 
+import { ApplicationLoanContext } from '../context/ApplicationLoanContext';
 
 const DashboardPeminjam = () => {
-  
-  const { value } = useContext(ApplicationLoanContext);
-  console.log(value);
+
+  const { formData, setFormData, connectWallet, handleChange, sendApllication } = useContext(ApplicationLoanContext);
+
+  if (!formData || !connectWallet) {
+    return <div>Loading...</div>; // Optional: handle if context is not yet available
+  }
 
   const guaranteeData = [
     { name: "Ali Subekti", occupation: "Pengusaha UMKM", loan: "5000", nisbah: "10", duration: "9", creditScore: "750", risk: "Rendah" },
@@ -65,12 +68,12 @@ const DashboardPeminjam = () => {
 
       {/* Grid untuk 3 Card */}
       <div className="flex justify-center">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  md:gap-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-7xl w-full  mx-auto">
-        <Card title="Total Dana Terjamin" value="50,000 USD" icon={<FaDollarSign />} />  {/* Icon Dollar */}
-        <Card title="Persentase Terjamin" value="8.5 %" icon={<FaPercentage />} />       {/* Icon Persentase */}
-        <Card title="Jumlah Penjamin" value="12" icon={<FaUsers />} />                   {/* Icon Users */}
-              </div>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  md:gap-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 max-w-7xl w-full  mx-auto">
+          <Card title="Total Dana Terjamin" value="50,000 USD" icon={<FaDollarSign />} />  {/* Icon Dollar */}
+          <Card title="Persentase Terjamin" value="8.5 %" icon={<FaPercentage />} />       {/* Icon Persentase */}
+          <Card title="Jumlah Penjamin" value="12" icon={<FaUsers />} />                   {/* Icon Users */}
+        </div>
+      </div>
 
       {/* Tambahkan GuaranteeCard di sini */}
       <div className="mt-8 flex flex-col gap-6">
@@ -104,9 +107,8 @@ const DashboardPeminjam = () => {
           {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
             <button
               key={page}
-              className={`px-4 py-2 mx-1 ${
-                currentPage === page ? 'bg-gray-800 text-white' : 'bg-gray-300 text-black'
-              } rounded`}
+              className={`px-4 py-2 mx-1 ${currentPage === page ? 'bg-gray-800 text-white' : 'bg-gray-300 text-black'
+                } rounded`}
               onClick={() => handlePageClick(page)}
             >
               {page}
