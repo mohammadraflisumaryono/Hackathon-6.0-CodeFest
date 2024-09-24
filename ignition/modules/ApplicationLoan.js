@@ -3,7 +3,7 @@
 
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-module.exports = buildModule("LoanModule", (m) => {
+module.exports = buildModule("ApplicationLoan", (m) => {
   // Step 1: Parameter for Transaction contract address
   const transactionContractAddress = m.getParameter("transactionContractAddress");
 
