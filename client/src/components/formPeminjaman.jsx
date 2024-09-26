@@ -177,7 +177,8 @@ const FormPeminjaman = () => {
           )}
           {step === 3 && (
             <>
-              <div className="space-y-4">
+            
+              {/* <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-white">Media Upload</h3>
                 <p className="text-sm text-gray-400">Add your documents here, and you can upload up to 5 files max</p>
                 <div
@@ -215,7 +216,7 @@ const FormPeminjaman = () => {
                   </ul>
                 )}
                 <p className="text-sm text-gray-400">Only support .pdf file</p>
-              </div>
+              </div> */}
             </>
           )}
           <div className="flex justify-between space-x-4 pt-4">

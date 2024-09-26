@@ -10,7 +10,7 @@ const DashboardPenjamin = () => {
   const itemsPerPage = 4;
 
 
-  console.log("testtt" + loanData)
+  console.log(loanData)
 
   // Hitung total halaman
   const totalPages = Math.ceil(loanData.length / itemsPerPage);

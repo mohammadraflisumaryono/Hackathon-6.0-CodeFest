@@ -34,7 +34,7 @@ const getEthereumContract = async () => {
 
 
 export const ApplicationLoanProvider = ({ children }) => {
-      const contract = getEthereumContract();
+    const contract = getEthereumContract();
     console.log(contract.getAllLoans);
 
     const [currentAccount, setCurrentAccount] = useState("");
@@ -56,13 +56,13 @@ export const ApplicationLoanProvider = ({ children }) => {
             console.error("Function 'getAllLoans' not found on the contract");
             return;
         }
-        try{
+        try {
             const loans = await contract.getAllLoans();
             console.log("Fetched loans:", loans);
 
             setLoanData(loans);
         }
-        catch(error){
+        catch (error) {
             console.error("Error fetching loans:", error);
         }
     }
@@ -124,7 +124,7 @@ export const ApplicationLoanProvider = ({ children }) => {
     }
 
     // Fetch all loans from the contract
-    const fetchAllLoans = async () => {
+    const fetchAllLoansApprv = async () => {
         try {
             const contract = await getEthereumContract();
 
@@ -155,7 +155,7 @@ export const ApplicationLoanProvider = ({ children }) => {
                 sendApplication,
                 loanApproveData,
                 fetchAllLoans,
-                   loanData
+                loanData
             }}
         >
             {children}

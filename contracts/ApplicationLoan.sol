@@ -36,7 +36,7 @@ contract ApplicationLoan {
         uint256 _deadline,
         bool _acceptedTerms
     ) public returns (uint256) {
-        require(_acceptedTerms, "Terms and conditions must be accepted."); // Check if terms are accepted
+        require(_acceptedTerms, "Terms and conditions must be accepted.");
 
         loanCounter++;
         loans[loanCounter] = Loan(
@@ -46,50 +46,44 @@ contract ApplicationLoan {
             _amount,
             _target,
             _deadline,
-            1, // Loan is active
-            _acceptedTerms, // Set the acceptedTerms value
+            1,
+            _acceptedTerms,
             new address[](0),
             new uint256[](0),
-            0, // Initialize total paid as 0
-            0 // Initialize total guaranteed as 0
+            0,
+            0
         );
         return loanCounter;
     }
 
-    // Modify the becomeGuarantor function to update totalGuaranteed
     function becomeGuarantor(uint256 _loanId, uint256 _amount) public {
         require(
             !hasUnpaidLoans(msg.sender),
             "User has unpaid loans and cannot be a guarantor."
         );
         Loan storage loan = loans[_loanId];
-        require(loan.isLoanActive == 1, "Loan is not accepting guarantees."); // Ensure loan is active for guarantees
+        require(loan.isLoanActive == 1, "Loan is not accepting guarantees.");
         require(
             loan.totalGuaranteed + _amount <= loan.amount,
             "Guarantee exceeds loan amount."
         );
 
-        // Add guarantor and guaranteed amount
         loan.guarantors.push(msg.sender);
         loan.guaranteedAmounts.push(_amount);
         loan.totalGuaranteed += _amount;
 
-        // Record guarantee in Transaction contract
         transactionContract.recordGuarantee(msg.sender, _loanId, _amount);
 
-        // If total guarantees match the loan amount, mark loan as ready for funding
         if (loan.totalGuaranteed == loan.amount) {
-            loan.isLoanActive = 2; // Loan is fully guaranteed and ready for lending
+            loan.isLoanActive = 2;
         }
     }
 
-    // Lender provides the loan once the full guarantee is met
     function provideLoan(uint256 _loanId, uint256 _amount) public {
         Loan storage loan = loans[_loanId];
-        require(loan.isLoanActive == 2, "Loan is not fully guaranteed yet."); // Ensure loan is fully guaranteed
+        require(loan.isLoanActive == 2, "Loan is not fully guaranteed yet.");
         require(_amount == loan.amount, "Loan amount does not match.");
 
-        // Record the loan disbursement in the Transaction contract
         transactionContract.recordPayment(
             msg.sender,
             loan.owner,
@@ -97,7 +91,7 @@ contract ApplicationLoan {
             _amount
         );
 
-        loan.isLoanActive = 3; // Mark loan as funded
+        loan.isLoanActive = 3;
     }
 
     function makePayment(uint256 _loanId, uint256 _amount) public {

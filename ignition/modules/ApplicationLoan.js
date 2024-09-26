@@ -5,6 +5,8 @@ const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
 module.exports = buildModule("ApplicationLoan", (m) => {
   // Step 1: Parameter for Transaction contract address
+
+  console.log("m.getParameter('transactionContractAddress')", m.getParameter("transactionContractAddress"));
   const transactionContractAddress = m.getParameter("transactionContractAddress");
 
   // Step 2: Deploy the Transaction contract
