@@ -12,7 +12,7 @@ contract ApplicationLoan {
         uint256 target;
         uint256 deadline;
         uint256 isLoanActive;
-        bool acceptedTerms; 
+        bool acceptedTerms;
         address[] guarantors;
         uint256[] guaranteedAmounts;
         uint256 totalPaid;
@@ -34,7 +34,7 @@ contract ApplicationLoan {
         uint256 _amount,
         uint256 _target,
         uint256 _deadline,
-        bool _acceptedTerms 
+        bool _acceptedTerms
     ) public returns (uint256) {
         require(_acceptedTerms, "Terms and conditions must be accepted."); // Check if terms are accepted
 
@@ -158,45 +158,6 @@ contract ApplicationLoan {
 
     function getLoan(uint256 _loanId) public view returns (LoanDetails memory) {
         Loan storage loan = loans[_loanId];
-
-        return LoanDetails(
-            loan.owner,
-            loan.title,
-            loan.description,
-            loan.amount,
-            loan.target,
-            loan.deadline,
-            loan.isLoanActive,
-            loan.acceptedTerms, // Return the acceptedTerms status
-            loan.guarantors,
-            loan.guaranteedAmounts,
-            loan.totalPaid,
-            loan.totalGuaranteed
-        );
-    }
-
-   function getAllLoans() public view returns (LoanDetails[] memory) {
-    // Buat array untuk menyimpan semua LoanDetails
-    LoanDetails[] memory allLoans = new LoanDetails[](loanCounter); // `loanCounter` adalah total jumlah pinjaman
-    
-    // Iterasi melalui setiap loan dan simpan ke dalam array allLoans
-    for (uint256 i = 0; i < loanCounter; i++) {
-        Loan storage loan = loans[i];
-        allLoans[i] = LoanDetails(
-            loan.owner,
-            loan.title,
-            loan.description,
-            loan.amount,
-            loan.target,
-            loan.deadline,
-            loan.isLoanActive,
-            loan.acceptedTerms, // Mengambil status acceptedTerms
-            loan.guarantors,
-            loan.guaranteedAmounts,
-            loan.totalPaid,
-            loan.totalGuaranteed
-        );
-
         return
             LoanDetails(
                 loan.owner,
@@ -206,11 +167,38 @@ contract ApplicationLoan {
                 loan.target,
                 loan.deadline,
                 loan.isLoanActive,
+                loan.acceptedTerms, // Return the acceptedTerms status
                 loan.guarantors,
                 loan.guaranteedAmounts,
                 loan.totalPaid,
                 loan.totalGuaranteed
             );
+    }
+
+    function getAllLoans() public view returns (LoanDetails[] memory) {
+        // Buat array untuk menyimpan semua LoanDetails
+        LoanDetails[] memory allLoans = new LoanDetails[](loanCounter); // loanCounter adalah total jumlah pinjaman
+
+        // Iterasi melalui setiap loan dan simpan ke dalam array allLoans
+        for (uint256 i = 0; i < loanCounter; i++) {
+            Loan storage loan = loans[i];
+            allLoans[i] = LoanDetails(
+                loan.owner,
+                loan.title,
+                loan.description,
+                loan.amount,
+                loan.target,
+                loan.deadline,
+                loan.isLoanActive,
+                loan.acceptedTerms, // Mengambil status acceptedTerms
+                loan.guarantors,
+                loan.guaranteedAmounts,
+                loan.totalPaid,
+                loan.totalGuaranteed
+            );
+        }
+
+        return allLoans; // Kembalikan array yang berisi semua LoanDetails
     }
 
     function allLoanApprove() public view returns (Loan[] memory) {
@@ -238,8 +226,4 @@ contract ApplicationLoan {
 
         return approvedLoans;
     }
-
-    return allLoans; // Kembalikan array yang berisi semua LoanDetails
-}
-
 }
