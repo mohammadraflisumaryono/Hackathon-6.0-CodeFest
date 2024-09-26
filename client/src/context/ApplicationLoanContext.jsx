@@ -19,16 +19,13 @@ const getEthereumContract = async () => {
     // Ensure that the contract is created using valid address and ABI
     const contract = new Contract(contractAddress, contractABI, signer);
 
-    console.log(
-        {
-            contractAddress,
-            contractABI,
-            provider,
-            signer,
-            contract
-
-        }
-    )
+    console.log({
+        contractAddress,
+        contractABI,
+        provider,
+        signer,
+        contract
+    });
 
     return contract;
 };
@@ -36,6 +33,7 @@ const getEthereumContract = async () => {
 
 export const ApplicationLoanProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState("");
+    const [loanApproveData, setLoanApproveData] = useState([]);
     const [formData, setFormData] = useState({
         owner: "",
         title: "",
@@ -84,17 +82,15 @@ export const ApplicationLoanProvider = ({ children }) => {
 
     const sendApplication = async () => {
         try {
-
-
             if (!window.ethereum) return alert("Please Install MetaMask");
             const { owner, title, description, amount, target, deadline } = formData;
 
-            const contract = getEthereumContract();
+            const contract = await getEthereumContract();
 
             if (!contract) return alert("Contract not found");
 
-            // Here you would typically call a contract method
-            // For example: await contract.createLoan(owner, title, description, amount, target, deadline);
+            // Call a contract method to create a loan
+            await contract.createLoan(owner, title, description, amount, target, deadline);
 
             console.log("Application sent successfully");
         } catch (error) {
@@ -103,13 +99,39 @@ export const ApplicationLoanProvider = ({ children }) => {
         }
     }
 
+    // Fetch all loans from the contract
+    const fetchAllLoans = async () => {
+        try {
+            const contract = await getEthereumContract();
+
+            // Call the `allLoanApprove` function from the smart contract to get approved loans
+            const loansApprove = await contract.allLoanApprove();
+            console.log("Fetched approved loans:", loansApprove);
+
+            // Assuming loansApprove is an array, set the state with the data
+            setLoanApproveData(loansApprove);
+        } catch (error) {
+            console.error("Error fetching loans:", error);
+        }
+    };
+
     useEffect(() => {
         checkIfWalletIsConnected();
     }, []);
 
     return (
-        <ApplicationLoanContext.Provider value={{ connectWallet, currentAccount, formData, handleChange, sendApplication }}>
+        <ApplicationLoanContext.Provider
+            value={{
+                connectWallet,
+                currentAccount,
+                formData,
+                handleChange,
+                sendApplication,
+                loanApproveData,
+                fetchAllLoans
+            }}
+        >
             {children}
         </ApplicationLoanContext.Provider>
-    )
-}
+    );
+};
