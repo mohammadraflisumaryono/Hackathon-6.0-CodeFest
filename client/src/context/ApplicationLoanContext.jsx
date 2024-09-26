@@ -19,6 +19,7 @@ const getEthereumContract = async () => {
     // Ensure that the contract is created using valid address and ABI
     const contract = new Contract(contractAddress, contractABI, signer);
 
+
     console.log({
         contractAddress,
         contractABI,
@@ -27,11 +28,15 @@ const getEthereumContract = async () => {
         contract
     });
 
+
     return contract;
 };
 
 
 export const ApplicationLoanProvider = ({ children }) => {
+      const contract = getEthereumContract();
+    console.log(contract.getAllLoans);
+
     const [currentAccount, setCurrentAccount] = useState("");
     const [loanApproveData, setLoanApproveData] = useState([]);
     const [formData, setFormData] = useState({
@@ -42,6 +47,25 @@ export const ApplicationLoanProvider = ({ children }) => {
         target: "",
         deadline: ""
     });
+
+    const [loanData, setLoanData] = useState([]);
+    const fetchAllLoans = async () => {
+        const loans = await contract.getAllLoans();
+
+        if (typeof contract.getAllLoans !== 'function') {
+            console.error("Function 'getAllLoans' not found on the contract");
+            return;
+        }
+        try{
+            const loans = await contract.getAllLoans();
+            console.log("Fetched loans:", loans);
+
+            setLoanData(loans);
+        }
+        catch(error){
+            console.error("Error fetching loans:", error);
+        }
+    }
 
     const handleChange = (e, name) => {
         setFormData((prevState) => ({
@@ -117,9 +141,11 @@ export const ApplicationLoanProvider = ({ children }) => {
 
     useEffect(() => {
         checkIfWalletIsConnected();
+        fetchAllLoans();
     }, []);
 
     return (
+
         <ApplicationLoanContext.Provider
             value={{
                 connectWallet,
@@ -128,7 +154,8 @@ export const ApplicationLoanProvider = ({ children }) => {
                 handleChange,
                 sendApplication,
                 loanApproveData,
-                fetchAllLoans
+                fetchAllLoans,
+                   loanData
             }}
         >
             {children}
