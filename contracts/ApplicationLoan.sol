@@ -12,6 +12,7 @@ contract ApplicationLoan {
         uint256 target;
         uint256 deadline;
         uint256 isLoanActive;
+        bool acceptedTerms; 
         address[] guarantors;
         uint256[] guaranteedAmounts;
         uint256 totalPaid;
@@ -26,13 +27,17 @@ contract ApplicationLoan {
         transactionContract = Transaction(_transactionContractAddress);
     }
 
+    // Modify the createLoan function to include the acceptedTerms parameter
     function createLoan(
         string memory _title,
         string memory _description,
         uint256 _amount,
         uint256 _target,
-        uint256 _deadline
+        uint256 _deadline,
+        bool _acceptedTerms 
     ) public returns (uint256) {
+        require(_acceptedTerms, "Terms and conditions must be accepted."); // Check if terms are accepted
+
         loanCounter++;
         loans[loanCounter] = Loan(
             msg.sender,
@@ -41,9 +46,10 @@ contract ApplicationLoan {
             _amount,
             _target,
             _deadline,
-            1,
+            1, // Loan is active
+            _acceptedTerms, // Set the acceptedTerms value
             new address[](0),
-            new uint256 [](0),
+            new uint256[](0),
             0, // Initialize total paid as 0
             0 // Initialize total guaranteed as 0
         );
@@ -121,6 +127,7 @@ contract ApplicationLoan {
         uint256 target;
         uint256 deadline;
         uint256 isLoanActive;
+        bool acceptedTerms; // Include the acceptedTerms in LoanDetails
         address[] guarantors;
         uint256[] guaranteedAmounts;
         uint256 totalPaid;
@@ -137,10 +144,38 @@ contract ApplicationLoan {
             loan.target,
             loan.deadline,
             loan.isLoanActive,
+            loan.acceptedTerms, // Return the acceptedTerms status
             loan.guarantors,
             loan.guaranteedAmounts,
             loan.totalPaid,
             loan.totalGuaranteed
         );
     }
+
+   function getAllLoans() public view returns (LoanDetails[] memory) {
+    // Buat array untuk menyimpan semua LoanDetails
+    LoanDetails[] memory allLoans = new LoanDetails[](loanCounter); // `loanCounter` adalah total jumlah pinjaman
+    
+    // Iterasi melalui setiap loan dan simpan ke dalam array allLoans
+    for (uint256 i = 0; i < loanCounter; i++) {
+        Loan storage loan = loans[i];
+        allLoans[i] = LoanDetails(
+            loan.owner,
+            loan.title,
+            loan.description,
+            loan.amount,
+            loan.target,
+            loan.deadline,
+            loan.isLoanActive,
+            loan.acceptedTerms, // Mengambil status acceptedTerms
+            loan.guarantors,
+            loan.guaranteedAmounts,
+            loan.totalPaid,
+            loan.totalGuaranteed
+        );
+    }
+
+    return allLoans; // Kembalikan array yang berisi semua LoanDetails
+}
+
 }
