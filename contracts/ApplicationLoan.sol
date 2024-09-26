@@ -58,10 +58,16 @@ contract ApplicationLoan {
 
     // Modify the becomeGuarantor function to update totalGuaranteed
     function becomeGuarantor(uint256 _loanId, uint256 _amount) public {
-        require(!hasUnpaidLoans(msg.sender), "User has unpaid loans and cannot be a guarantor.");
+        require(
+            !hasUnpaidLoans(msg.sender),
+            "User has unpaid loans and cannot be a guarantor."
+        );
         Loan storage loan = loans[_loanId];
         require(loan.isLoanActive == 1, "Loan is not accepting guarantees."); // Ensure loan is active for guarantees
-        require(loan.totalGuaranteed + _amount <= loan.amount, "Guarantee exceeds loan amount.");
+        require(
+            loan.totalGuaranteed + _amount <= loan.amount,
+            "Guarantee exceeds loan amount."
+        );
 
         // Add guarantor and guaranteed amount
         loan.guarantors.push(msg.sender);
@@ -84,20 +90,36 @@ contract ApplicationLoan {
         require(_amount == loan.amount, "Loan amount does not match.");
 
         // Record the loan disbursement in the Transaction contract
-        transactionContract.recordPayment(msg.sender, loan.owner, _loanId, _amount);
+        transactionContract.recordPayment(
+            msg.sender,
+            loan.owner,
+            _loanId,
+            _amount
+        );
 
         loan.isLoanActive = 3; // Mark loan as funded
     }
 
     function makePayment(uint256 _loanId, uint256 _amount) public {
-        require(loans[_loanId].isLoanActive == 3, "Loan is not active for payment.");
-        require(msg.sender == loans[_loanId].owner, "Only the borrower can make payments.");
+        require(
+            loans[_loanId].isLoanActive == 3,
+            "Loan is not active for payment."
+        );
+        require(
+            msg.sender == loans[_loanId].owner,
+            "Only the borrower can make payments."
+        );
 
         // Record the payment
         loans[_loanId].totalPaid += _amount;
 
         // Call Transaction contract to log the payment
-        transactionContract.recordPayment(loans[_loanId].owner, msg.sender, _loanId, _amount);
+        transactionContract.recordPayment(
+            loans[_loanId].owner,
+            msg.sender,
+            _loanId,
+            _amount
+        );
 
         // Check if loan is fully paid
         if (loans[_loanId].totalPaid >= loans[_loanId].amount) {
@@ -136,6 +158,7 @@ contract ApplicationLoan {
 
     function getLoan(uint256 _loanId) public view returns (LoanDetails memory) {
         Loan storage loan = loans[_loanId];
+
         return LoanDetails(
             loan.owner,
             loan.title,
@@ -173,6 +196,47 @@ contract ApplicationLoan {
             loan.totalPaid,
             loan.totalGuaranteed
         );
+
+        return
+            LoanDetails(
+                loan.owner,
+                loan.title,
+                loan.description,
+                loan.amount,
+                loan.target,
+                loan.deadline,
+                loan.isLoanActive,
+                loan.guarantors,
+                loan.guaranteedAmounts,
+                loan.totalPaid,
+                loan.totalGuaranteed
+            );
+    }
+
+    function allLoanApprove() public view returns (Loan[] memory) {
+        uint256 totalApprovedLoans = 0;
+        uint256 i;
+
+        // First, count how many loans are approved
+        for (i = 1; i <= loanCounter; i++) {
+            if (loans[i].isLoanActive == 2) {
+                totalApprovedLoans++;
+            }
+        }
+
+        // Create an array to hold approved loans
+        Loan[] memory approvedLoans = new Loan[](totalApprovedLoans);
+        uint256 index = 0;
+
+        // Add approved loans to the array
+        for (i = 1; i <= loanCounter; i++) {
+            if (loans[i].isLoanActive == 2) {
+                approvedLoans[index] = loans[i];
+                index++;
+            }
+        }
+
+        return approvedLoans;
     }
 
     return allLoans; // Kembalikan array yang berisi semua LoanDetails
