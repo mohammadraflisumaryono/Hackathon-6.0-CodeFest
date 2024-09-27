@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ethers, Contract } from 'ethers';
 import { contractABI, contractAddress } from '../utils/ApllicationLoan';
-import FormPeminjaman from '../components/formPeminjaman';
 
 export const ApplicationLoanContext = React.createContext();
 
@@ -40,7 +39,6 @@ export const ApplicationLoanProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState("");
     const [loanApproveData, setLoanApproveData] = useState([]);
     const [formData, setFormData] = useState({
-        owner: "",
         title: "",
         description: "",
         amount: "",
@@ -123,16 +121,13 @@ export const ApplicationLoanProvider = ({ children }) => {
         }
     }
 
-    // Fetch all loans from the contract
     const fetchAllLoansApprv = async () => {
         try {
             const contract = await getEthereumContract();
 
-            // Call the `allLoanApprove` function from the smart contract to get approved loans
             const loansApprove = await contract.allLoanApprove();
             console.log("Fetched approved loans:", loansApprove);
 
-            // Assuming loansApprove is an array, set the state with the data
             setLoanApproveData(loansApprove);
         } catch (error) {
             console.error("Error fetching loans:", error);
@@ -142,6 +137,7 @@ export const ApplicationLoanProvider = ({ children }) => {
     useEffect(() => {
         checkIfWalletIsConnected();
         fetchAllLoans();
+        fetchAllLoansApprv();
     }, []);
 
     return (
