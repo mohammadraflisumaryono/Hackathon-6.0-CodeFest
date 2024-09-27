@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import  { useContext, useEffect, useState } from 'react';
 import { FaDollarSign, FaPercentage, FaUsers } from 'react-icons/fa';  // Import ikon yang dibutuhkan
 import Card from '../components/cardDetail';
 import GuaranteeCard from '../components/GuaranteeCard'; // Import komponen GuaranteeCard
@@ -93,10 +93,9 @@ const DashboardPeminjam = () => {
           {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
             <button
               key={page}
-              className={`px-4 py-2 mx-1 text-sm sm:text-base ${
+              className={`px-4 py-2 mx-1 ${
                 currentPage === page ? 'bg-gray-800 text-white' : 'bg-gray-300 text-black'
               } rounded`}
-              className={`px-4 py-2 mx-1 ${currentPage === page ? 'bg-gray-800 text-white' : 'bg-gray-300 text-black'} rounded`}
               onClick={() => handlePageClick(page)}
             >
               {page}
@@ -104,7 +103,7 @@ const DashboardPeminjam = () => {
           ))}
 
           <button
-            className={`px-4 py-2 mx-2 text-sm sm:text-base ${currentPage === totalPages ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-700'} text-white rounded`}
+            className={`px-4 py-2 mx-2 ${currentPage === totalPages ? 'bg-gray-400' : 'bg-green-500 hover:bg--700'} text-white rounded`}
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
           >

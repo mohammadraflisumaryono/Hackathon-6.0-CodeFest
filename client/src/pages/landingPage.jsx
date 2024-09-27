@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 // Reusable Components
 
-const Button = ({ text, ariaLabel, className = "" }) => (
+const Button = ({ text, ariaLabel, className = "", onClick }) => (
     <button
         className={`bg-blue-500 text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-300 ${className}`}
         aria-label={ariaLabel}
+        onClick={onClick} // <-- Menambahkan event handler di sini
     >
         {text}
     </button>
@@ -16,7 +17,8 @@ const Button = ({ text, ariaLabel, className = "" }) => (
 Button.propTypes = {
     text: PropTypes.string.isRequired,
     ariaLabel: PropTypes.string.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
+    onClick: PropTypes.func.isRequired// <-- Menambahkan properti onClick
 };
 
 const ImageBox = ({ imageSrc, altText, color }) => (
@@ -89,7 +91,7 @@ const HeroSection = () => {
 
     const buttonMulaiSekarang = () => { 
         console.log('Button clicked');
-        navigate('/penjamin');
+        navigate('/penjamin'); // Arahkan ke halaman /penjamin
     };
 
     return (
@@ -100,7 +102,12 @@ const HeroSection = () => {
                     Sakti Loan menggunakan teknologi blockchain untuk menyediakan pinjaman dan peminjaman yang aman dan transparan.
                     Baik Anda meminjam atau memberikan pinjaman, setiap transaksi dilindungi dan cepat, tanpa perantara yang terlibat.
                 </p>
-                <Button text="Mulai Sekarang" ariaLabel="Mulai Sekarang" className="cursor-pointer" onClick={buttonMulaiSekarang} />
+               <Button
+                    text="Mulai Sekarang"
+                    ariaLabel="Mulai Sekarang"
+                    className="cursor-pointer"
+                    onClick={buttonMulaiSekarang} // <-- Properti onClick diterapkan di sini
+                />
             </div>
             <ImageGrid />
         </div>

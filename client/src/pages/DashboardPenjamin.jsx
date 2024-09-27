@@ -1,5 +1,5 @@
 import { FaDollarSign, FaPercentage, FaUsers } from 'react-icons/fa';  // Import ikon yang dibutuhkan
-import { useState, useContext, useEffect } from 'react'; // Import useContext dan useEffect
+import { useState, useContext} from 'react'; // Import useContext dan useEffect
 import Card from '../components/cardDetail';
 import GuaranteeCard from '../components/GuaranteeCard'; // Import komponen GuaranteeCard
 import { ApplicationLoanContext } from '../context/ApplicationLoanContext'; // Import context

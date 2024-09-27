@@ -29,19 +29,29 @@ const ProfileDashboard = () => {
           </div>
         </header>
 
-        <div className="bg-gray-800 rounded-lg p-4 mb-6 flex items-center space-x-4">
-          <div className="bg-green-500 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
-            GM
-          </div>
-          <div>
-            <h2 className="text-lg font-semibold">Ghani Mullet</h2>
-            <span className="text-gray-400 text-sm">Pengusaha UMKM</span>
-            <div className="flex items-center mt-1">
-              <FaCheckCircle className="text-green-500 mr-1" />
-              <span className="text-green-500 text-sm">Verified</span>
-            </div>
+       <div className="bg-gray-800 rounded-lg p-4 mb-6 flex justify-between items-center space-x-4">
+      <div className="flex items-center space-x-4">
+        <div className="bg-green-500 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
+          GM
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold">Ghani Mullet</h2>
+          <span className="text-gray-400 text-sm">Pengusaha UMKM</span>
+          <div className="flex items-center mt-1">
+            <FaCheckCircle className="text-green-500 mr-1" />
+            <span className="text-green-500 text-sm">Verified</span>
           </div>
         </div>
+      </div>
+
+      {/* Button on the right side */}
+      <Link 
+        to="/Form-peminjaman" 
+        className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-500 transition-colors"
+      >
+        Ajukan Pinjaman
+      </Link>
+    </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-gray-800 rounded-lg p-4">
