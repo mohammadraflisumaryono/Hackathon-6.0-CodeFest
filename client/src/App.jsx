@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import MasterLayout from './layout/masterLayout';
-import FormPeminjaman from './components/formPeminjaman';
+import Login from './components/login';
 import DashboardPenjamin from './pages/DashboardPenjamin';
 import RiwayatTransaksi from './pages/RiwayatTransaksi';
-import Login from './components/login';
 import HomeLayout from './layout/homeLayout';
 import LandingPage from './pages/LandingPage';
 import DashboardPeminjam from './pages/DashboardPeminjam';
@@ -15,6 +14,9 @@ import { ethers } from 'ethers';
 import UserManagementABI from './utils/json/UserManagement.json';
 
 export const AuthContext = createContext();
+import FormPeminjaman from './components/formPeminjaman';
+import { ApplicationLoanProvider } from './context/ApplicationLoanContext';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

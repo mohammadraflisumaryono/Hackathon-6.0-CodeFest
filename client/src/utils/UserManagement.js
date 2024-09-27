@@ -2,4 +2,4 @@ import abi from './json/UserManagement.json';
 
 export const contractABI = abi.abi;
 
-export const contractAddress = '';
+export const contractAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
