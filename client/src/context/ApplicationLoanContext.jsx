@@ -186,7 +186,7 @@ export const ApplicationLoanProvider = ({ children }) => {
             const receipt = await tx.wait();
 
 
-            console.log("Transaction confirmed:", receipt);
+            console.log("Transaction confirmed:", receipt.transactionHash);
 
             alert("Aplikasi pinjaman berhasil dikirim!");
 
