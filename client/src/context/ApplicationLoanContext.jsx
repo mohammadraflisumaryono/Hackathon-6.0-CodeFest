@@ -19,7 +19,7 @@ export const ApplicationLoanProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState("");
     const [loanApproveData, setLoanApproveData] = useState([]);
     const [formData, setFormData] = useState({
-        owner: "",
+        owner:"",
         title: "",
         description: "",
         amount: "",
@@ -110,8 +110,8 @@ export const ApplicationLoanProvider = ({ children }) => {
             owner,
             title,
             description,
-            amount,
-            target,
+            amount, 
+            target, 
             deadline
         )
         if (!owner || !title || !description || !amount || !target || !deadline) {
