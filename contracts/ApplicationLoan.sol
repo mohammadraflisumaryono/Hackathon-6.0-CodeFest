@@ -38,7 +38,6 @@ contract ApplicationLoan {
         bool _acceptedTerms
     ) public returns (uint256) {
         require(_acceptedTerms, "Terms and conditions must be accepted.");
-        require(_acceptedTerms, "Terms and conditions must be accepted.");
 
         loanCounter++;
         loans[loanCounter] = Loan(
@@ -66,7 +65,6 @@ contract ApplicationLoan {
         );
         Loan storage loan = loans[_loanId];
         require(loan.isLoanActive == 1, "Loan is not accepting guarantees.");
-        require(loan.isLoanActive == 1, "Loan is not accepting guarantees.");
         require(
             loan.totalGuaranteed + _amount <= loan.amount,
             "Guarantee exceeds loan amount."
@@ -90,7 +88,6 @@ contract ApplicationLoan {
     // Provide the loan amount after all guarantees are fulfilled
     function provideLoan(uint256 _loanId, uint256 _amount) public {
         Loan storage loan = loans[_loanId];
-        require(loan.isLoanActive == 2, "Loan is not fully guaranteed yet.");
         require(loan.isLoanActive == 2, "Loan is not fully guaranteed yet.");
         require(_amount == loan.amount, "Loan amount does not match.");
 
