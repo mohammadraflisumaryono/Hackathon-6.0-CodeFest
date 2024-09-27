@@ -61,20 +61,20 @@ LayananCard.propTypes = {
 };
 
 const ProcessStep = ({ number, title, description, imageSrc, isLeft }) => (
-    <div className={`flex items-center mb-12 ${isLeft ? '' : 'flex-row-reverse'}`}>
-        <div className={`w-1/2 flex ${isLeft ? 'justify-end pr-8' : 'justify-start pl-8'}`}>
-            <div className="text-center">
-                <div className="bg-gray-700 rounded-lg p-2 mb-2">
-                    <img src={imageSrc} alt={title} className="w-16 h-16 object-contain" />
-                </div>
-                <div className="text-4xl font-bold text-gray-600">{number}</div>
-            </div>
-        </div>
-        <div className="w-1/2">
-            <h3 className="text-xl font-semibold mb-2">{title}</h3>
-            <p className="text-sm text-gray-400">{description}</p>
-        </div>
+  <div className={`flex items-center mb-16 ${isLeft ? 'flex-row' : 'flex-row-reverse'}`}>
+    <div className={`w-1/3 ${isLeft ? 'pr-8' : 'pl-8'}`}>
+      <div className="bg-gray-700 rounded-lg p-4 mb-4 w-52 h-52 flex items-center justify-center">
+        <img src={imageSrc} alt={title} className="w-44 h-44 object-contain" />
+      </div>
     </div>
+    <div className="w-5/6">
+      <div className="flex items-center mb-4">
+        <div className="text-5xl font-bold text-gray-600 mr-6">{number}</div>
+        <h3 className="text-3xl font-semibold">{title}</h3>
+      </div>
+      <p className="text-lg text-gray-400">{description}</p>
+    </div>
+  </div>
 );
 
 ProcessStep.propTypes = {
@@ -154,46 +154,46 @@ const LayananKamiSection = () => (
 );
 
 const ProsesPeminjamanSection = () => (
-    <div id="proses-peminjaman" className="bg-gray-900 text-white p-8 w-full mb-16">
-        <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-semibold text-center mb-6">Proses Peminjaman</h2>
-            <p className="text-gray-400 text-center mb-10">Bagaimana caranya melakukan peminjaman di sini?</p>
-            <div className="space-y-8">
-                <ProcessStep
-                    number="01"
-                    title="Pengisian Data Peminjaman"
-                    description="Peminjam mengisi formulir yang dibutuhkan dan sangat mudah prosesnya."
-                    imageSrc="../img/contract.png"
-                    isLeft={true}
-                />
-                <ProcessStep
-                    number="02"
-                    title="Mencari Penjamin"
-                    description="Setelah data diisi, penjamin harus menyetujui peminjaman yang akan menjamin kelancaran transaksi."
-                    imageSrc="../img/send-money 1.png"
-                    isLeft={false}
-                />
-                <ProcessStep
-                    number="03"
-                    title="Dana Jaminan Terpenuhi"
-                    description="Ketika penjamin sudah memenuhi dana jaminan, maka proses akan dilanjutkan ke pemberi pinjaman."
-                    imageSrc="../img/pinjam.png"
-                    isLeft={true}
-                />
-                <ProcessStep
-                    number="04"
-                    title="Pemberi Pinjaman Bertransaksi"
-                    description="Pemberi pinjaman bersedia, kemudian proses dilanjutkan dan peminjam menerima dana sesuai kesepakatan."
-                    imageSrc="../img/peer-to-peer.png"
-                    isLeft={false}
-                />
-            </div>
-        </div>
+  <div id="proses-peminjaman" className="bg-gray-900 text-white p-8 w-full">
+    <div className="max-w-4xl mx-auto">
+      <h2 className="text-4xl font-semibold text-center mb-4">Proses Peminjaman</h2>
+      <p className="text-gray-400 text-center mb-12">Bagaimana caranya melakukan peminjaman di sini?</p>
+      <div className="space-y-12">
+        <ProcessStep
+          number="01"
+          title="Pengisian Data Peminjaman"
+          description="Peminjam mengisi formulir yang dibutuhkan dan sangat mudah prosesnya."
+          imageSrc="../img/contract.png"
+          isLeft={true}
+        />
+        <ProcessStep
+          number="02"
+          title="Mencari Penjamin"
+          description="Setelah data diisi, penjamin harus menyetujui peminjaman yang akan menjamin kelancaran transaksi."
+          imageSrc="../img/send-money 1.png"
+          isLeft={false}
+        />
+        <ProcessStep
+          number="03"
+          title="Dana Jaminan Terpenuhi"
+          description="Ketika penjamin sudah memenuhi dana jaminan, maka proses akan dilanjutkan ke pemberi pinjaman."
+          imageSrc="../img/pinjam.png"
+          isLeft={true}
+        />
+        <ProcessStep
+          number="04"
+          title="Pemberi Pinjaman Bertransaksi"
+          description="Pemberi pinjaman bersedia, kemudian proses dilanjutkan dan peminjam menerima dana sesuai kesepakatan."
+          imageSrc="../img/peer-to-peer.png"
+          isLeft={false}
+        />
+      </div>
     </div>
+  </div>
 );
 
 const TentangKamiSection = () => (
-    <div id="tentang-kami" className="bg-gray-900 text-white p-8 w-full mb-16">
+    <div id="tentang-kami" className="bg-gray-800 text-white p-8 w-full mb-16">
         <div className="max-w-5xl mx-auto">
             <h2 className="text-3xl font-semibold mb-6">Tentang Kami</h2>
             <div className="flex">
