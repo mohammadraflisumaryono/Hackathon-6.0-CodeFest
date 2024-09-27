@@ -165,7 +165,7 @@ const FormPeminjaman = () => {
                 <input
                   id="deadline"
                   name="deadline"
-                  type="text"
+                  type="date"
                   required
                   value={formData.deadline}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -177,7 +177,7 @@ const FormPeminjaman = () => {
           )}
           {step === 3 && (
             <>
-            
+
               {/* <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-white">Media Upload</h3>
                 <p className="text-sm text-gray-400">Add your documents here, and you can upload up to 5 files max</p>
