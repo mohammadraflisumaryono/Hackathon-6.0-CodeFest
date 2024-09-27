@@ -196,7 +196,7 @@ const FormPeminjaman = () => {
                 <input
                   id="deadline"
                   name="deadline"
-                  type="date"
+                  type="text"
                   required
                   value={formData.deadline}
                   className="w-full px-3 py-2 bg-white text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -208,46 +208,7 @@ const FormPeminjaman = () => {
           )}
           {step === 3 && (
             <>
-            
-              {/* <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Media Upload</h3>
-                <p className="text-sm text-gray-400">Add your documents here, and you can upload up to 5 files max</p>
-                <div
-                  className="border-2 border-dashed border-blue-500 rounded-lg p-4 text-center cursor-pointer"
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                >
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    multiple
-                    accept=".pdf"
-                    className="hidden"
-                    id="fileInput"
-                  />
-                  <label htmlFor="fileInput" className="cursor-pointer text-blue-500 hover:text-blue-600">
-                    Drag your file(s) or browse
-                  </label>
-                  <p className="text-sm text-gray-400 mt-2">Max 10 MB files are allowed</p>
-                </div>
-                {files.length > 0 && (
-                  <ul className="space-y-2">
-                    {files.map((file, index) => (
-                      <li key={index} className="flex justify-between items-center text-white">
-                        <span>{file.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveFile(index)}
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <p className="text-sm text-gray-400">Only support .pdf file</p>
-              </div> */}
+              {/* Langkah 3 - File Upload */}
             </>
           )}
           <div className="flex justify-between space-x-4 pt-4">
