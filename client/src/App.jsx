@@ -15,7 +15,6 @@ import UserManagementABI from './utils/json/UserManagement.json';
 
 export const AuthContext = createContext();
 import FormPeminjaman from './components/formPeminjaman';
-import { ApplicationLoanProvider } from './context/ApplicationLoanContext';
 
 
 function App() {
