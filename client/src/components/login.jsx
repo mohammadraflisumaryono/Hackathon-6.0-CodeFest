@@ -1,124 +1,81 @@
-import { useState, useEffect } from 'react';
+import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ethers } from 'ethers';
-
-// Asumsikan bahwa fungsi ini diimpor dari file terpisah
-// yang berisi logika untuk berinteraksi dengan kontrak
-import { getUserManagementContractInstance } from '../contracts/UserManagement';
+import { AuthContext } from '../App'; // AuthContext manages global auth state
+import { getUserManagementContractInstance, UserManagementInterface } from '../contracts/UserManagement'; // Contract instance
 
 const Login = () => {
-  const [account, setAccount] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [contract, setContract] = useState(null);
-  const [error, setError] = useState('');
-  const [isContractInitialized, setIsContractInitialized] = useState(false);
+  const [account, setAccount] = useState(''); // User's wallet account
+  const [name, setName] = useState(''); // User's name
+  const [password, setPassword] = useState(''); // User's password
+  const [contract, setContract] = useState(null); // UserManagement contract instance
+  const [error, setError] = useState(''); // Error messages
+  const [isContractInitialized, setIsContractInitialized] = useState(false); // Contract init status
+  const navigate = useNavigate(); // Router navigation
+  const { setIsLoggedIn } = useContext(AuthContext); // Global login state from context
 
-  useEffect(() => {
-    const initContract = async () => {
-      if (typeof window.ethereum !== 'undefined') {
-        try {
-          // Pastikan ethers tersedia
-          if (typeof ethers === 'undefined') {
-            throw new Error('Ethers library tidak tersedia');
-          }
-
-          // Gunakan BrowserProvider untuk ethers v6
-          const provider = new ethers.BrowserProvider(window.ethereum);
-          const signer = await provider.getSigner();
-          const contractInstance = await getUserManagementContractInstance(signer);
-          setContract(contractInstance);
-          setIsContractInitialized(true);
-          console.log("Contract initialized:", contractInstance);
-        } catch (error) {
-          console.error("Failed to initialize contract:", error);
-          setError(`Gagal menginisialisasi kontrak: ${error.message}`);
-          setIsContractInitialized(false);
-        }
-      } else {
-        setError("Ethereum provider tidak ditemukan. Silakan instal MetaMask!");
-        setIsContractInitialized(false);
-      }
-    };
-
-    initContract();
-  }, []);
-
+  // Connect wallet and initialize the contract
   const connectWallet = async () => {
     if (typeof window.ethereum !== 'undefined') {
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
-        const accounts = await provider.send("eth_requestAccounts", []);
-        if (accounts.length > 0) {
-          setAccount(accounts[0]);
-          console.log("Connected account:", accounts[0]);
-        }
+        const accounts = await provider.send("eth_requestAccounts", []); // Request wallet connection
+        setAccount(accounts[0]); // Set the connected account
+        const signer = await provider.getSigner(); // Get signer to sign transactions
+        const contractInstance = getUserManagementContractInstance(signer); // Initialize the contract
+        setContract(contractInstance); // Set contract instance in state
+        setIsContractInitialized(true); // Mark contract as initialized
+        console.log("Contract initialized:", contractInstance);
       } catch (error) {
-        console.error("Failed to connect wallet:", error);
-        setError("Gagal menghubungkan dompet. Silakan coba lagi.");
+        console.error("Failed to connect wallet or initialize contract:", error);
+        setError("Failed to connect wallet. Please try again.");
       }
     } else {
-      setError("Silakan instal MetaMask!");
+      setError("Please install MetaMask!");
     }
   };
 
+  // Register new user
   const registerUser = async () => {
     if (!isContractInitialized) {
-      setError("Kontrak belum diinisialisasi. Silakan coba lagi nanti.");
+      setError("Contract is not initialized. Please connect your wallet first.");
       return;
     }
-    if (!contract) {
-      setError("Kontrak tidak tersedia. Silakan coba lagi nanti.");
+    if (!account || !name || !password) {
+      setError("Please fill in all fields.");
       return;
     }
-    if (!account) {
-      setError("Silakan hubungkan dompet Anda terlebih dahulu.");
-      return;
-    }
-    if (!name || !password) {
-      setError("Silakan isi semua kolom.");
-      return;
-    }
-
     try {
-      const result = await contract.register(account, name, password);
-      console.log("Registration result:", result);
-
-      // Tunggu transaksi selesai
-      await result.wait();
-
-      alert("Pendaftaran berhasil!");
-      setName('');
-      setPassword('');
+      const result = await UserManagementInterface.register(contract, account, name, password); // Call smart contract
+      await result.wait(); // Wait for transaction confirmation
+      console.log("Registration successful!");
+      setIsLoggedIn(true); // Update global state to logged in
+      navigate('/penjamin'); // Redirect after successful registration
     } catch (error) {
       console.error("Registration failed:", error);
-      if (error.message.includes("User already exists")) {
-        setError("Alamat ini sudah terdaftar. Silakan masuk.");
-      } else {
-        setError("Pendaftaran gagal. Lihat konsol untuk detailnya.");
-      }
+      setError("Registration failed. Please check the console for details.");
     }
   };
 
+  // Login existing user
   const loginUser = async () => {
-    if (!isContractInitialized || !contract) {
-      setError("Kontrak belum diinisialisasi. Silakan coba lagi nanti.");
+    if (!isContractInitialized) {
+      setError("Contract is not initialized. Please connect your wallet first.");
       return;
     }
-    if (!account) {
-      setError("Silakan hubungkan dompet Anda terlebih dahulu.");
+    if (!account || !password) {
+      setError("Please fill in all fields.");
       return;
     }
     try {
-      const result = await contract.login(account, password);
-      console.log("Login result:", result);
-      
-      // Tunggu transaksi selesai
-      await result.wait();
-
-      alert("Login berhasil!");
+      const result = await UserManagementInterface.login(contract, account, password); // Call smart contract for login
+      await result.wait(); // Wait for transaction confirmation
+      console.log("Login successful!");
+      setIsLoggedIn(true); // Update global state to logged in
+      navigate('/penjamin'); // Redirect after successful login
     } catch (error) {
       console.error("Login failed:", error);
-      setError("Login gagal. Lihat konsol untuk detailnya.");
+      setError("Login failed. Please check your password and try again.");
     }
   };
 
@@ -129,20 +86,21 @@ const Login = () => {
 
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
 
+        {/* Connect Wallet Button */}
         <button
           onClick={connectWallet}
-          className={`w-full py-2 px-4 text-white font-semibold rounded-lg mb-4 ${
-            account ? 'bg-green-500' : 'bg-blue-500'
-          }`}
+          className={`w-full py-2 px-4 text-white font-semibold rounded-lg mb-4 ${account ? 'bg-green-500' : 'bg-blue-500'}`}
         >
-          {account ? "Dompet Terhubung" : "Hubungkan Dompet"}
+          {account ? "Wallet Connected" : "Connect Wallet"}
         </button>
 
-        {account && <p className="text-green-500 mb-4 text-center">Akun terhubung: {account}</p>}
+        {/* Display connected wallet address */}
+        {account && <p className="text-green-500 mb-4 text-center">Connected account: {account}</p>}
 
+        {/* Input fields for name and password */}
         <input
           type="text"
-          placeholder="Nama"
+          placeholder="Name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
@@ -156,20 +114,21 @@ const Login = () => {
           className="w-full p-2 mb-6 border border-gray-300 rounded-lg"
         />
 
+        {/* Register and Login Buttons */}
         <div className="flex justify-between">
           <button
             onClick={registerUser}
             className="w-1/2 bg-blue-500 text-white py-2 px-4 rounded-lg mr-2 font-semibold"
             disabled={!isContractInitialized}
           >
-            Daftar
+            Register
           </button>
           <button
             onClick={loginUser}
             className="w-1/2 bg-green-500 text-white py-2 px-4 rounded-lg ml-2 font-semibold"
             disabled={!isContractInitialized}
           >
-            Masuk
+            Login
           </button>
         </div>
       </div>

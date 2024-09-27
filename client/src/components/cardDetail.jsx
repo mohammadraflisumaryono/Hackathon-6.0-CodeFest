@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 const Card = ({ title, value, icon }) => {
   return (
     <div 
-      className="bg-[#1F2937] p-4 rounded-xl shadow-2xl flex items-center justify-between h-40 w-full sm:w-72 md:w-80 lg:w-96 relative overflow-hidden"
+      className="bg-[#1F2937] p-4 rounded-xl shadow-2xl flex items-center justify-between h-40 w-full ml-4 sm:w-72 md:w-80 lg:w-96 relative overflow-hidden"
       style={{
         boxShadow: '0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
       }}

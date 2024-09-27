@@ -1,5 +1,5 @@
 import { FaDollarSign, FaPercentage, FaUsers } from 'react-icons/fa';  // Import ikon yang dibutuhkan
-import { useState, useContext, useEffect } from 'react'; // Import useContext dan useEffect
+import { useState, useContext} from 'react'; // Import useContext dan useEffect
 import Card from '../components/cardDetail';
 import GuaranteeCard from '../components/GuaranteeCard'; // Import komponen GuaranteeCard
 import { ApplicationLoanContext } from '../context/ApplicationLoanContext'; // Import context
@@ -21,32 +21,22 @@ const DashboardPenjamin = () => {
     currentPage * itemsPerPage
   );
 
-  // Fungsi untuk navigasi ke halaman berikutnya
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
-  // Fungsi untuk navigasi ke halaman sebelumnya
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  // Fungsi untuk navigasi ke halaman tertentu
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-  };
+  const handlePageClick = (page) => setCurrentPage(page);
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-4 ml-10">Dashboard Peminjam</h1>
-      <p className="text-gray-300 mb-6 ml-10">
-        Selamat datang di platform penjaminan berbasis blockchain! Di sini, Anda bisa memilih peminjam yang membutuhkan dana dan menjamin pinjaman <br />
-        mereka dengan aman melalui smart contract blockchain yang transparan dan otomatis.
-        Sistem kami memastikan setiap transaksi berjalan tanpa <br />
+    <div className="p-4 sm:p-6 lg:p-8">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4">Dashboard Penjamin</h1>
+      <p className="text-gray-300 text-sm sm:text-base lg:text-lg mb-6">
+        Selamat datang di platform penjaminan berbasis blockchain! Di sini, Anda bisa memilih peminjam yang membutuhkan dana dan menjamin pinjaman 
+        mereka dengan aman melalui smart contract blockchain yang transparan dan otomatis. Sistem kami memastikan setiap transaksi berjalan tanpa 
         risiko manipulasi dan meminimalisir risiko gagal bayar.
       </p>
 
@@ -59,9 +49,9 @@ const DashboardPenjamin = () => {
         </div>
       </div>
 
-      {/* Tambahkan GuaranteeCard di sini */}
+      {/* Guarantee Cards and Pagination */}
       <div className="mt-8 flex flex-col gap-6">
-        <h3 className="text-xl font-bold mb-6 ml-10">Tambah Dana Jaminan</h3>
+        <h3 className="text-lg sm:text-xl font-bold mb-6">Tambah Dana Jaminan </h3>
 
         {/* Tampilkan GuaranteeCard berdasarkan pagination */}
         {currentData.length > 0 ? (
