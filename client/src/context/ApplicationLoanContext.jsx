@@ -101,25 +101,78 @@ export const ApplicationLoanProvider = ({ children }) => {
             throw new Error('No ethereum object.');
         }
     }
+    const validateFormData = ({ owner, title, description, amount, target, deadline }) => {
+        if (!owner || !title || !description || !amount || !target || !deadline) {
+            alert("Please fill all fields");
+            return false;
+        }
+
+        if (title.length <= 5) {
+            alert("Title must be more than 5 characters");
+            return false;
+        }
+
+        if (description.length <= 10) {
+            alert("Description must be more than 10 characters");
+            return false;
+        }
+
+        if (isNaN(amount) || amount <= 0) {
+            alert("Amount must be greater than 0");
+            return false;
+        }
+
+        if (isNaN(target) || target <= 0) {
+            alert("Target must be greater than 0");
+            return false;
+        }
+
+        const currentDate = new Date();
+        const deadlineDate = new Date(deadline);
+
+        if (deadlineDate <= currentDate) {
+            alert("Deadline must be a future date");
+            return false;
+        }
+
+        return true;
+    };
+
+    const checkEthereumAvailability = () => {
+        if (!window.ethereum) {
+            alert("Please Install MetaMask");
+            return false;
+        }
+        return true;
+    };
 
     const sendApplication = async () => {
         try {
-            if (!window.ethereum) return alert("Please Install MetaMask");
-            const { owner, title, description, amount, target, deadline } = formData;
+            // Check MetaMask availability
+            if (!checkEthereumAvailability()) return;
 
+            // Validate form data
+            if (!validateFormData(formData)) return;
+
+            // Get Ethereum contract instance
             const contract = await getEthereumContract();
 
-            if (!contract) return alert("Contract not found");
+            if (!contract) {
+                alert("Contract not found");
+                return;
+            }
 
-            // Call a contract method to create a loan
+            const { owner, title, description, amount, target, deadline } = formData;
+
+            // Call the contract method to create a loan
             await contract.createLoan(owner, title, description, amount, target, deadline);
 
             console.log("Application sent successfully");
         } catch (error) {
-            console.log(error);
-            throw new Error('Error while sending application');
+            console.error(error);
+            alert('Error while sending application');
         }
-    }
+    };
 
     const fetchAllLoansApprv = async () => {
         try {
