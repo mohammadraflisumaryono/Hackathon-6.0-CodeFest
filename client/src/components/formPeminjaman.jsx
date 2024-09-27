@@ -5,6 +5,8 @@ import { ApplicationLoanContext } from '../context/ApplicationLoanContext';
 const FormPeminjaman = () => {
   const [step, setStep] = useState(1);
   const [files, setFiles] = useState([]);
+  const [isTermsPopupOpen, setIsTermsPopupOpen] = useState(false);
+  const [isAgree, setIsAgree] = useState(false);
   const navigate = useNavigate();
 
   const { connectWallet, currentAccount, sendApplication } = useContext(ApplicationLoanContext);
@@ -19,6 +21,23 @@ const FormPeminjaman = () => {
   });
 
   const handleNext = () => {
+    // Validasi setiap step sebelum melanjutkan
+    if (step === 1) {
+      const { owner, title, description } = formData;
+      if (!owner || !title || !description) {
+        alert('Harap isi semua field di langkah ini sebelum melanjutkan.');
+        return;
+      }
+    }
+
+    if (step === 2) {
+      const { amount, target, deadline } = formData;
+      if (!amount || !target || !deadline) {
+        alert('Harap isi semua field di langkah ini sebelum melanjutkan.');
+        return;
+      }
+    }
+
     if (step < 3) {
       setStep(prevStep => prevStep + 1);
     }
@@ -65,12 +84,24 @@ const FormPeminjaman = () => {
     const { owner, title, description, amount, target, deadline } = formData;
 
     if (!owner || !title || !description || !amount || !target || !deadline) {
-      alert('Please fill all fields');
+      alert('Harap isi semua field sebelum melanjutkan.');
       return;
     }
-    sendApplication(formData);
+    setIsTermsPopupOpen(true); // Tampilkan pop-up Terms and Conditions
   };
 
+  const handleAgreeChange = (e) => {
+    setIsAgree(e.target.checked);
+  };
+
+  const handleFinish = () => {
+    if (isAgree) {
+      sendApplication(formData);
+      setIsTermsPopupOpen(false);
+    } else {
+      alert('Harap setujui syarat dan ketentuan.');
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4">
@@ -177,46 +208,7 @@ const FormPeminjaman = () => {
           )}
           {step === 3 && (
             <>
-            
-              {/* <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Media Upload</h3>
-                <p className="text-sm text-gray-400">Add your documents here, and you can upload up to 5 files max</p>
-                <div
-                  className="border-2 border-dashed border-blue-500 rounded-lg p-4 text-center cursor-pointer"
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                >
-                  <input
-                    type="file"
-                    onChange={handleFileChange}
-                    multiple
-                    accept=".pdf"
-                    className="hidden"
-                    id="fileInput"
-                  />
-                  <label htmlFor="fileInput" className="cursor-pointer text-blue-500 hover:text-blue-600">
-                    Drag your file(s) or browse
-                  </label>
-                  <p className="text-sm text-gray-400 mt-2">Max 10 MB files are allowed</p>
-                </div>
-                {files.length > 0 && (
-                  <ul className="space-y-2">
-                    {files.map((file, index) => (
-                      <li key={index} className="flex justify-between items-center text-white">
-                        <span>{file.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveFile(index)}
-                          className="text-red-500 hover:text-red-600"
-                        >
-                          Remove
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <p className="text-sm text-gray-400">Only support .pdf file</p>
-              </div> */}
+              {/* Langkah 3 - File Upload */}
             </>
           )}
           <div className="flex justify-between space-x-4 pt-4">
@@ -247,6 +239,45 @@ const FormPeminjaman = () => {
           </div>
         </form>
       </div>
+
+      {/* Pop-up Terms and Conditions */}
+      {isTermsPopupOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="bg-gray-800 p-8 rounded-xl shadow-xl max-w-lg w-full">
+            <h3 className="text-xl font-bold text-white mb-4">Terms and Conditions</h3>
+            <p className="text-gray-300 text-sm mb-4">
+              Silakan baca dan setujui syarat dan ketentuan sebelum melanjutkan transaksi.
+            </p>
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                id="agree"
+                checked={isAgree}
+                onChange={handleAgreeChange}
+                className="mr-2"
+              />
+              <label htmlFor="agree" className="text-gray-400">I agree to the terms and conditions</label>
+            </div>
+            <div className="flex justify-between">
+              <button
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition"
+                onClick={() => setIsTermsPopupOpen(false)} // Kembali ke form step 3
+              >
+                Back
+              </button>
+              <button
+                className={`px-4 py-2 rounded-md text-white transition ${
+                  isAgree ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-500 cursor-not-allowed'
+                }`}
+                onClick={handleFinish}
+                disabled={!isAgree} 
+              >
+                Finish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
