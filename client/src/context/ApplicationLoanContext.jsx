@@ -86,6 +86,14 @@ export const ApplicationLoanProvider = ({ children }) => {
     };
 
     const validateFormData = ({ owner, title, description, amount, target, deadline }) => {
+        console.log(
+            owner,
+            title,
+            description,
+            amount, 
+            target, 
+            deadline
+        )
         if (!owner || !title || !description || !amount || !target || !deadline) {
             alert("Please fill all fields");
             return false;

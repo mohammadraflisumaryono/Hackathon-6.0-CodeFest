@@ -63,17 +63,17 @@ const ActivityTable = ({ activities, showPagination }) => {
     <>
       <table {...getTableProps()} className="w-full bg-gray-800 rounded-lg">
         <thead>
-          {headerGroups.map((headerGroup) => (
+          {headerGroups.map((headerGroup, idx) => (
             <tr
               {...headerGroup.getHeaderGroupProps()}
               className="text-center text-gray-400"
-              key={headerGroup.id}
+              key={idx} // Tambahkan key yang unik
             >
-              {headerGroup.headers.map((column) => (
+              {headerGroup.headers.map((column, colIdx) => (
                 <th
                   {...column.getHeaderProps()}
                   className="pb-2"
-                  key={column.id}
+                  key={colIdx} // Tambahkan key yang unik
                 >
                   {column.render('Header')}
                 </th>
@@ -82,19 +82,19 @@ const ActivityTable = ({ activities, showPagination }) => {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
+          {page.map((row, rowIdx) => {
             prepareRow(row);
             return (
               <tr
                 {...row.getRowProps()}
                 className="border-t border-gray-700"
-                key={row.id}
+                key={rowIdx} // Tambahkan key yang unik
               >
-                {row.cells.map((cell) => (
+                {row.cells.map((cell, cellIdx) => (
                   <td
                     {...cell.getCellProps()}
-                    className="py-2 text-center" // Tambahkan text-center untuk merapikan status ke tengah
-                    key={cell.column.id}
+                    className="py-2 text-center"
+                    key={cellIdx} // Tambahkan key yang unik
                   >
                     {cell.render('Cell')}
                   </td>
@@ -128,7 +128,7 @@ const ActivityTable = ({ activities, showPagination }) => {
 
             {pageOptions.map((pageNum, idx) => (
               <button
-                key={idx}
+                key={idx} // Tambahkan key yang unik
                 className={`px-3 py-1 rounded-md ${
                   pageIndex === pageNum
                     ? 'bg-green-500'
