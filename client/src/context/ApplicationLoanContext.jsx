@@ -1,44 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { ethers, Contract } from 'ethers';
+import { ethers } from 'ethers';
 import { contractABI, contractAddress } from '../utils/ApllicationLoan';
 
 export const ApplicationLoanContext = React.createContext();
 
 // Function to get the contract instance
 const getEthereumContract = async () => {
-    if (!window.ethereum) {
-        throw new Error("Ethereum provider not found");
-    }
-
-    console.log("Ethereum provider found");
+    if (!window.ethereum) throw new Error("No Ethereum provider found");
 
     const provider = new ethers.BrowserProvider(window.ethereum);
     const signer = await provider.getSigner();
+    const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
-    // Ensure that the contract is created using valid address and ABI
-    const contract = new Contract(contractAddress, contractABI, signer);
-
-
-    console.log({
-        contractAddress,
-        contractABI,
-        provider,
-        signer,
-        contract
-    });
-
-
+    console.log("Contract initialized:", contract);
     return contract;
 };
 
-
 export const ApplicationLoanProvider = ({ children }) => {
-    const contract = getEthereumContract();
-    console.log(contract.getAllLoans);
-
     const [currentAccount, setCurrentAccount] = useState("");
     const [loanApproveData, setLoanApproveData] = useState([]);
     const [formData, setFormData] = useState({
+        owner: "",
         title: "",
         description: "",
         amount: "",
@@ -47,30 +29,31 @@ export const ApplicationLoanProvider = ({ children }) => {
     });
 
     const [loanData, setLoanData] = useState([]);
-    const fetchAllLoans = async () => {
-        const loans = await contract.getAllLoans();
 
-        if (typeof contract.getAllLoans !== 'function') {
-            console.error("Function 'getAllLoans' not found on the contract");
-            return;
-        }
+    const fetchAllLoans = async () => {
         try {
+            const contract = await getEthereumContract();
+
+            if (typeof contract.getAllLoans !== 'function') {
+                console.error("Function 'getAllLoans' not found on the contract");
+                return;
+            }
+
             const loans = await contract.getAllLoans();
             console.log("Fetched loans:", loans);
 
             setLoanData(loans);
-        }
-        catch (error) {
+        } catch (error) {
             console.error("Error fetching loans:", error);
         }
-    }
+    };
 
     const handleChange = (e, name) => {
         setFormData((prevState) => ({
             ...prevState,
             [name]: e.target.value
         }));
-    }
+    };
 
     const checkIfWalletIsConnected = async () => {
         try {
@@ -87,7 +70,7 @@ export const ApplicationLoanProvider = ({ children }) => {
             console.log(error);
             throw new Error('No ethereum object.');
         }
-    }
+    };
 
     const connectWallet = async () => {
         try {
@@ -100,7 +83,8 @@ export const ApplicationLoanProvider = ({ children }) => {
             console.log(error);
             throw new Error('No ethereum object.');
         }
-    }
+    };
+
     const validateFormData = ({ owner, title, description, amount, target, deadline }) => {
         if (!owner || !title || !description || !amount || !target || !deadline) {
             alert("Please fill all fields");
@@ -145,34 +129,73 @@ export const ApplicationLoanProvider = ({ children }) => {
         }
         return true;
     };
+    // Fungsi untuk mengirim aplikasi pinjaman
+    const sendApplication = async (formData) => {
+        console.log("Form Data:", formData);
 
-    const sendApplication = async () => {
         try {
-            // Check MetaMask availability
             if (!checkEthereumAvailability()) return;
 
-            // Validate form data
             if (!validateFormData(formData)) return;
 
-            // Get Ethereum contract instance
-            const contract = await getEthereumContract();
+            const contract = await getEthereumContract(); // Memastikan kontrak sudah diperoleh
 
-            if (!contract) {
-                alert("Contract not found");
+            if (!contract || typeof contract.createLoan !== 'function') {
+                console.error("Contract or createLoan function not found");
+                alert("Kontrak tidak ditemukan atau fungsi createLoan tidak tersedia");
                 return;
             }
 
-            const { owner, title, description, amount, target, deadline } = formData;
+            const { title, description, amount, target, deadline, acceptedTerms } = formData;
 
-            // Call the contract method to create a loan
-            await contract.createLoan(owner, title, description, amount, target, deadline);
+            // Cek apakah acceptedTerms memiliki nilai, jika tidak beri nilai default
+            if (acceptedTerms === undefined || acceptedTerms === null) {
+                alert("Anda harus menerima syarat dan ketentuan");
+                return;
+            }
 
-            console.log("Application sent successfully");
+            // Konversi amount dan target ke BigNumber
+            const amountInWei = ethers.parseUnits(amount.toString(), 'ether');
+            const targetInWei = ethers.parseUnits(target.toString(), 'ether');
+
+            // Konversi deadline ke timestamp Unix
+            const deadlineTimestamp = Math.floor(new Date(deadline).getTime() / 1000);
+
+            console.log("Calling createLoan with params:", {
+                title,
+                description,
+                amountInWei: amountInWei.toString(),
+                targetInWei: targetInWei.toString(),
+                deadlineTimestamp,
+                acceptedTerms
+            });
+
+            // Panggil metode kontrak untuk membuat pinjaman
+            const tx = await contract.createLoan(
+                title,
+                description,
+                amountInWei,
+                targetInWei,
+                deadlineTimestamp,
+                acceptedTerms // Pastikan acceptedTerms sudah memiliki nilai true atau false
+            );
+
+            console.log("Transaction sent:", tx.hash);
+
+            // Tunggu transaksi selesai
+            const receipt = await tx.wait();
+
+
+            console.log("Transaction confirmed:", receipt);
+
+            alert("Aplikasi pinjaman berhasil dikirim!");
+
         } catch (error) {
-            console.error(error);
-            alert('Error while sending application');
+            console.error("Error in sendApplication:", error);
+            alert('Kesalahan saat mengirim aplikasi: ' + (error.message || 'Unknown error'));
         }
     };
+
 
     const fetchAllLoansApprv = async () => {
         try {
@@ -194,7 +217,6 @@ export const ApplicationLoanProvider = ({ children }) => {
     }, []);
 
     return (
-
         <ApplicationLoanContext.Provider
             value={{
                 connectWallet,
