@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "./Transaction.sol"; // Import contract Transaction
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol"; // Import ERC20 interface
 
 contract ApplicationLoan {
     struct Loan {
@@ -21,13 +21,14 @@ contract ApplicationLoan {
 
     mapping(uint256 => Loan) public loans;
     uint256 public loanCounter;
-    Transaction public transactionContract;
+    IERC20 public stablecoin; // Stablecoin interface
 
-    constructor(address _transactionContractAddress) {
-        transactionContract = Transaction(_transactionContractAddress);
+    // Constructor to initialize stablecoin address
+    constructor(address _stablecoinAddress) {
+        stablecoin = IERC20(_stablecoinAddress);
     }
 
-    // Modify the createLoan function to include the acceptedTerms parameter
+    // Create a loan with necessary details
     function createLoan(
         string memory _title,
         string memory _description,
@@ -36,6 +37,7 @@ contract ApplicationLoan {
         uint256 _deadline,
         bool _acceptedTerms
     ) public returns (uint256) {
+        require(_acceptedTerms, "Terms and conditions must be accepted.");
         require(_acceptedTerms, "Terms and conditions must be accepted.");
 
         loanCounter++;
@@ -48,14 +50,15 @@ contract ApplicationLoan {
             _deadline,
             1,
             _acceptedTerms,
-            new address[](0),
-            new uint256[](0),
+            new address [](0) ,
+            new uint256 [](0) ,
             0,
             0
         );
         return loanCounter;
     }
 
+    // Become a guarantor for a specific loan
     function becomeGuarantor(uint256 _loanId, uint256 _amount) public {
         require(
             !hasUnpaidLoans(msg.sender),
@@ -63,37 +66,44 @@ contract ApplicationLoan {
         );
         Loan storage loan = loans[_loanId];
         require(loan.isLoanActive == 1, "Loan is not accepting guarantees.");
+        require(loan.isLoanActive == 1, "Loan is not accepting guarantees.");
         require(
             loan.totalGuaranteed + _amount <= loan.amount,
             "Guarantee exceeds loan amount."
+        );
+
+        // Transfer stablecoin from guarantor to the contract
+        require(
+            stablecoin.transferFrom(msg.sender, address(this), _amount),
+            "Stablecoin transfer failed."
         );
 
         loan.guarantors.push(msg.sender);
         loan.guaranteedAmounts.push(_amount);
         loan.totalGuaranteed += _amount;
 
-        transactionContract.recordGuarantee(msg.sender, _loanId, _amount);
-
         if (loan.totalGuaranteed == loan.amount) {
-            loan.isLoanActive = 2;
+            loan.isLoanActive = 2; // Mark loan as fully guaranteed
         }
     }
 
+    // Provide the loan amount after all guarantees are fulfilled
     function provideLoan(uint256 _loanId, uint256 _amount) public {
         Loan storage loan = loans[_loanId];
         require(loan.isLoanActive == 2, "Loan is not fully guaranteed yet.");
+        require(loan.isLoanActive == 2, "Loan is not fully guaranteed yet.");
         require(_amount == loan.amount, "Loan amount does not match.");
 
-        transactionContract.recordPayment(
-            msg.sender,
-            loan.owner,
-            _loanId,
-            _amount
+        // Transfer stablecoin from provider to the borrower
+        require(
+            stablecoin.transferFrom(msg.sender, loan.owner, _amount),
+            "Stablecoin transfer failed."
         );
 
-        loan.isLoanActive = 3;
+        loan.isLoanActive = 3; // Mark loan as active
     }
 
+    // Make a payment for a loan
     function makePayment(uint256 _loanId, uint256 _amount) public {
         require(
             loans[_loanId].isLoanActive == 3,
@@ -104,16 +114,14 @@ contract ApplicationLoan {
             "Only the borrower can make payments."
         );
 
+        // Transfer stablecoin from borrower to the contract
+        require(
+            stablecoin.transferFrom(msg.sender, address(this), _amount),
+            "Stablecoin transfer failed."
+        );
+
         // Record the payment
         loans[_loanId].totalPaid += _amount;
-
-        // Call Transaction contract to log the payment
-        transactionContract.recordPayment(
-            loans[_loanId].owner,
-            msg.sender,
-            _loanId,
-            _amount
-        );
 
         // Check if loan is fully paid
         if (loans[_loanId].totalPaid >= loans[_loanId].amount) {
@@ -121,6 +129,7 @@ contract ApplicationLoan {
         }
     }
 
+    // Check if a user has any unpaid loans
     function hasUnpaidLoans(address _user) public view returns (bool) {
         for (uint256 i = 1; i <= loanCounter; i++) {
             if (loans[i].owner == _user && loans[i].isLoanActive != 4) {
@@ -130,26 +139,13 @@ contract ApplicationLoan {
         return false; // No unpaid loans
     }
 
+    // Verify if a loan has received full guarantees
     function isGuaranteeAprop(uint256 _loanId) public view returns (bool) {
         Loan storage loan = loans[_loanId];
         return loan.totalGuaranteed == loan.amount;
     }
 
-    struct LoanDetails {
-        address owner;
-        string title;
-        string description;
-        uint256 amount;
-        uint256 target;
-        uint256 deadline;
-        uint256 isLoanActive;
-        bool acceptedTerms; // Include the acceptedTerms in LoanDetails
-        address[] guarantors;
-        uint256[] guaranteedAmounts;
-        uint256 totalPaid;
-        uint256 totalGuaranteed;
-    }
-
+    // Get loan details
     function getLoan(uint256 _loanId) public view returns (LoanDetails memory) {
         Loan storage loan = loans[_loanId];
         return
@@ -161,7 +157,7 @@ contract ApplicationLoan {
                 loan.target,
                 loan.deadline,
                 loan.isLoanActive,
-                loan.acceptedTerms, // Return the acceptedTerms status
+                loan.acceptedTerms,
                 loan.guarantors,
                 loan.guaranteedAmounts,
                 loan.totalPaid,
@@ -169,14 +165,28 @@ contract ApplicationLoan {
             );
     }
 
-    function getAllLoans() public view returns (LoanDetails[] memory) {
-        // Buat array untuk menyimpan semua LoanDetails
-        LoanDetails[] memory allLoans = new LoanDetails[](loanCounter); // loanCounter adalah total jumlah pinjaman
+    struct LoanDetails {
+        address owner;
+        string title;
+        string description;
+        uint256 amount;
+        uint256 target;
+        uint256 deadline;
+        uint256 isLoanActive;
+        bool acceptedTerms;
+        address[] guarantors;
+        uint256[] guaranteedAmounts;
+        uint256 totalPaid;
+        uint256 totalGuaranteed;
+    }
 
-        // Iterasi melalui setiap loan dan simpan ke dalam array allLoans
-        for (uint256 i = 0; i < loanCounter; i++) {
+    // Get all loans details
+    function getAllLoans() public view returns (LoanDetails[] memory) {
+        LoanDetails[] memory allLoans = new LoanDetails[](loanCounter);
+
+        for (uint256 i = 1; i <= loanCounter; i++) {
             Loan storage loan = loans[i];
-            allLoans[i] = LoanDetails(
+            allLoans[i - 1] = LoanDetails(
                 loan.owner,
                 loan.title,
                 loan.description,
@@ -184,7 +194,7 @@ contract ApplicationLoan {
                 loan.target,
                 loan.deadline,
                 loan.isLoanActive,
-                loan.acceptedTerms, // Mengambil status acceptedTerms
+                loan.acceptedTerms,
                 loan.guarantors,
                 loan.guaranteedAmounts,
                 loan.totalPaid,
@@ -192,26 +202,23 @@ contract ApplicationLoan {
             );
         }
 
-        return allLoans; // Kembalikan array yang berisi semua LoanDetails
+        return allLoans;
     }
 
+    // Get all approved loans
     function allLoanApprove() public view returns (Loan[] memory) {
         uint256 totalApprovedLoans = 0;
-        uint256 i;
 
-        // First, count how many loans are approved
-        for (i = 1; i <= loanCounter; i++) {
+        for (uint256 i = 1; i <= loanCounter; i++) {
             if (loans[i].isLoanActive == 2) {
                 totalApprovedLoans++;
             }
         }
 
-        // Create an array to hold approved loans
         Loan[] memory approvedLoans = new Loan[](totalApprovedLoans);
         uint256 index = 0;
 
-        // Add approved loans to the array
-        for (i = 1; i <= loanCounter; i++) {
+        for (uint256 i = 1; i <= loanCounter; i++) {
             if (loans[i].isLoanActive == 2) {
                 approvedLoans[index] = loans[i];
                 index++;
