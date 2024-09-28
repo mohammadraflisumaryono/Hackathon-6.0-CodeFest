@@ -38,6 +38,7 @@ Ensure you have the following installed on your machine:
 
 1. Clone the repository:
    ```bash
+   https://github.com/mohammadraflisumaryono/Hackathon-6.0-CodeFest.git
   - clone git
   - buka project
   - npm install
