@@ -2,8 +2,22 @@ import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { contractABI, contractAddress } from '../utils/ApllicationLoan';
 
+
 export const ApplicationLoanContext = React.createContext();
 
+export const getUserManagementContractInstance = (signer) => {
+    return new ethers.Contract(contractAddress, abi, signer);
+ };
+ 
+ export const UserManagementInterface = {
+    register: async (contract, account, name, password) => {
+       return await contract.register(account, name, password);
+    },
+    login: async (contract, account, password) => {
+       return await contract.login(account, password);
+    }
+ };
+// Function to get the contract instance
 const getEthereumContract = async () => {
     if (!window.ethereum) throw new Error("No Ethereum provider found");
 
@@ -93,18 +107,23 @@ export const ApplicationLoanProvider = ({ children }) => {
     };
 
     const connectWallet = async () => {
-        try {
-            if (!window.ethereum) return alert("Please Install MetaMask");
-
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-
-            setCurrentAccount(accounts[0]);
-        } catch (error) {
-            console.log(error);
-            throw new Error('No ethereum object.');
+        if (typeof window.ethereum !== 'undefined') {
+           // Dapatkan provider dan akun yang terhubung dari MetaMask
+           const provider = new ethers.BrowserProvider(window.ethereum);
+           const accounts = await provider.send("eth_requestAccounts", []);
+           setAccount(accounts[0]); // Simpan akun yang terhubung
+           
+           // Mendapatkan signer dan menginisialisasi kontrak
+           const signer = await provider.getSigner();
+           const contractInstance = getUserManagementContractInstance(signer);
+           setContract(contractInstance); // Simpan instance kontrak
+           setIsContractInitialized(true); // Tandai bahwa kontrak telah diinisialisasi
+           console.log("Contract initialized:", contractInstance);
+        } else {
+           setError("Please install MetaMask!");
         }
-    };
-
+     };
+     
     const validateFormData = ({ owner, title, description, amount, target, deadline }) => {
         console.log(
             owner,
@@ -223,6 +242,52 @@ export const ApplicationLoanProvider = ({ children }) => {
             alert('Kesalahan saat mengirim aplikasi: ' + (error.message || 'Unknown error'));
         }
     };
+    
+
+    const registerUser = async () => {
+        if (!isContractInitialized) {
+           setError("Contract is not initialized. Please connect your wallet first.");
+           return;
+        }
+        if (!account || !name || !password) {
+           setError("Please fill in all fields.");
+           return;
+        }
+        try {
+           const result = await UserManagementInterface.register(contract, account, name, password); // Memanggil smart contract
+           await result.wait(); // Menunggu konfirmasi transaksi
+           console.log("Registration successful!");
+           setIsLoggedIn(true); // Tandai pengguna telah login
+           navigate('/penjamin'); // Redirect setelah registrasi berhasil
+        } catch (error) {
+           console.error("Registration failed:", error);
+           setError("Registration failed. Please check the console for details.");
+        }
+     };
+
+     
+     const loginUser = async () => {
+        if (!isContractInitialized) {
+           setError("Contract is not initialized. Please connect your wallet first.");
+           return;
+        }
+        if (!account || !password) {
+           setError("Please fill in all fields.");
+           return;
+        }
+        try {
+           const result = await UserManagementInterface.login(contract, account, password); // Memanggil smart contract untuk login
+           await result.wait(); // Menunggu konfirmasi transaksi
+           console.log("Login successful!");
+           setIsLoggedIn(true); // Tandai pengguna telah login
+           navigate('/penjamin'); // Redirect setelah login berhasil
+        } catch (error) {
+           console.error("Login failed:", error);
+           setError("Login failed. Please check your password and try again.");
+        }
+     };
+
+     
 
 
     const fetchAllLoansApprv = async () => {
