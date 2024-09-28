@@ -4,7 +4,6 @@ import { contractABI, contractAddress } from '../utils/ApllicationLoan';
 
 export const ApplicationLoanContext = React.createContext();
 
-// Function to get the contract instance
 const getEthereumContract = async () => {
     if (!window.ethereum) throw new Error("No Ethereum provider found");
 
@@ -39,10 +38,31 @@ export const ApplicationLoanProvider = ({ children }) => {
                 return;
             }
 
+            // Fetch loans from the contract
             const loans = await contract.getAllLoans();
             console.log("Fetched loans:", loans);
 
-            setLoanData(loans);
+            // Format the fetched data (BigNumber to string and timestamps)
+            const formattedLoans = loans.map(loan => ({
+                owner: loan.owner,
+                title: loan.title,
+                description: loan.description,
+                amount: ethers.utils.formatUnits(loan.amount, 18), // Format amount
+                target: ethers.utils.formatUnits(loan.target, 18), // Format target
+                totalPaid: ethers.utils.formatUnits(loan.totalPaid, 18), // Format total paid
+                totalGuaranteed: ethers.utils.formatUnits(loan.totalGuaranteed, 18), // Format total guaranteed
+                deadline: new Date(loan.deadline * 1000).toLocaleString(), // Convert deadline to readable date
+                isLoanActive: loan.isLoanActive,
+                acceptedTerms: loan.acceptedTerms,
+                guarantors: loan.guarantors,
+                guaranteedAmounts: loan.guaranteedAmounts.map(amt => ethers.utils.formatUnits(amt, 18)) // Format guarantors' amounts
+            }));
+
+            console.log("Formatted loans:", formattedLoans);
+
+            // Update state with the formatted loan data
+            setLoanData(formattedLoans);
+
         } catch (error) {
             console.error("Error fetching loans:", error);
         }
@@ -90,8 +110,8 @@ export const ApplicationLoanProvider = ({ children }) => {
             owner,
             title,
             description,
-            amount, 
-            target, 
+            amount,
+            target,
             deadline
         )
         if (!owner || !title || !description || !amount || !target || !deadline) {
@@ -194,7 +214,7 @@ export const ApplicationLoanProvider = ({ children }) => {
             const receipt = await tx.wait();
 
 
-            console.log("Transaction confirmed:", receipt.transactionHash);
+            console.log("Transaction confirmed:", receipt);
 
             alert("Aplikasi pinjaman berhasil dikirim!");
 

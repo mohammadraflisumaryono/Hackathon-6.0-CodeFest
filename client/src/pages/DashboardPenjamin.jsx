@@ -1,5 +1,5 @@
 import { FaDollarSign, FaPercentage, FaUsers } from 'react-icons/fa';  // Import ikon yang dibutuhkan
-import { useState, useContext} from 'react'; // Import useContext dan useEffect
+import { useState, useContext } from 'react'; // Import useContext dan useEffect
 import Card from '../components/cardDetail';
 import GuaranteeCard from '../components/GuaranteeCard'; // Import komponen GuaranteeCard
 import { ApplicationLoanContext } from '../context/ApplicationLoanContext'; // Import context
@@ -35,8 +35,8 @@ const DashboardPenjamin = () => {
     <div className="p-4 sm:p-6 lg:p-8">
       <h1 className="text-2xl sm:text-3xl font-bold mb-4">Dashboard Penjamin</h1>
       <p className="text-gray-300 text-sm sm:text-base lg:text-lg mb-6">
-        Selamat datang di platform penjaminan berbasis blockchain! Di sini, Anda bisa memilih peminjam yang membutuhkan dana dan menjamin pinjaman 
-        mereka dengan aman melalui smart contract blockchain yang transparan dan otomatis. Sistem kami memastikan setiap transaksi berjalan tanpa 
+        Selamat datang di platform penjaminan berbasis blockchain! Di sini, Anda bisa memilih peminjam yang membutuhkan dana dan menjamin pinjaman
+        mereka dengan aman melalui smart contract blockchain yang transparan dan otomatis. Sistem kami memastikan setiap transaksi berjalan tanpa
         risiko manipulasi dan meminimalisir risiko gagal bayar.
       </p>
 
